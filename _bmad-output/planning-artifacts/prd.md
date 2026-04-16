@@ -9,6 +9,9 @@ stepsCompleted:
   - step-05-domain
   - step-06-innovation
   - step-07-project-type
+  - step-08-scoping
+  - step-09-functional
+  - step-10-nonfunctional
 inputDocuments: []
 workflowType: 'prd'
 classification:
@@ -271,3 +274,146 @@ toDoFastTrack is a cross-platform consumer application consisting of three layer
 - **Monorepo recommended:** Shared types, utilities, and API client code between web and React Native to reduce duplication
 - **Capacity model:** Server-side calculation — not client-side — so data is consistent across devices and survives app reinstalls
 - **Environment separation:** Development, staging, and production environments required before launch
+
+## Project Scoping & Phased Development
+
+### MVP Strategy & Philosophy
+
+**MVP Approach:** Experience MVP — the goal is for users to feel the core value (realistic planning + goal progress) within their first week, and to be converted to paying subscribers after a 30-day free trial.
+
+**Resource Requirements:** Solo developer. Sequencing and scope discipline are critical — every feature added to MVP extends the timeline significantly.
+
+**Free Trial:** 30 days free, then $5/month via Stripe. Full feature access during trial.
+
+### MVP Feature Set (Phase 1)
+
+**Core User Journeys Supported:**
+- Laura (goal-pursuer): onboarding → goal setup → daily planning → capacity feedback → goal streaks
+- Julie (overcommitter): overload warning → list trimming → goal-alignment nudges
+- Alex (undecided): guided goal discovery flow
+- Admin: Stripe subscription management + basic account tooling
+
+**Must-Have Capabilities:**
+
+- **Onboarding:** Account creation (email/password + Google/Apple Sign-In), guided goal-setting for up to 3 long-term goals, optional goal discovery flow for users who aren't sure
+- **Daily Planning:** Create todos with effort point assignment (user-set), goal-tag each todo (which goal does it serve?), wellness category allocation (exercise, fun, rest) required before day is "set"
+- **Capacity Model:** Tracks completed points per day, enters "learning" state for first 7-10 days with transparent messaging ("Still learning your pace — keep completing tasks"), produces capacity estimates and overload warnings from week 2 onward
+- **Feedback & Reinforcement:** Overexertion alerts when daily list exceeds capacity estimate, positive reinforcement messages on todo completion and goal streaks, goal-alignment nudges when a goal hasn't been touched in 3+ days
+- **Cross-Platform:** React SPA (web) + React Native (iOS + Android), shared REST API + PostgreSQL backend
+- **Auth & Sessions:** JWT tokens, cookie-based web sessions, auto-login for returning users on landing page
+- **Push Notifications:** Morning planning reminder, overexertion alert, goal nudge, positive reinforcement
+- **Offline Support:** Local storage of today's plan, sync on reconnect
+- **Subscription:** Stripe integration, 30-day free trial, $5/month recurring billing, failed payment handling
+- **SEO Landing Page:** Public marketing page with sign-up and login, optimized for search
+
+**Deliberately excluded from MVP:**
+- App-suggested point estimates (requires more history data — Phase 2)
+- Social media / screen time tracking (Phase 2)
+- Admin analytics dashboard (manual Stripe dashboard sufficient at early scale)
+
+### Post-MVP Features
+
+**Phase 2 — Growth (post product-market fit):**
+- App-suggested effort point estimates based on historical task patterns
+- Social media / screen time awareness integration
+- Goal progress visualization (weekly/monthly effort breakdown by goal)
+- Streak tracking and milestone celebrations
+- Admin dashboard with aggregate analytics (DAU, retention, capacity model accuracy)
+
+**Phase 3 — Expansion:**
+- AI-driven daily plan suggestions
+- Calendar integration (block time for high-point todos)
+- Community / accountability features (optional goal-sharing)
+- Coaching-style insights: patterns, burnout risk trends, personalized recommendations
+
+### Risk Mitigation Strategy
+
+**Technical Risks:**
+- *Biggest risk:* Offline sync conflict resolution and cross-platform parity as a solo developer. **Mitigation:** Launch web first, ship mobile to TestFlight/Play internal testing in parallel, release mobile publicly 4-6 weeks after web launch. Reduces surface area at launch.
+- *Capacity model cold start:* Display explicit "learning" state for first 10 days with encouraging copy. Don't show capacity warnings until minimum 5 days of data exist.
+- *App Store review delays:* Submit to both stores 2-3 weeks before planned launch date to absorb review cycles.
+
+**Market Risks:**
+- *Biggest risk:* Users don't maintain the daily planning habit. **Mitigation:** Push notification for morning planning reminder is an MVP requirement, not a growth feature. The 30-day trial gives enough time to experience the full habit loop before payment.
+- *Competitor response:* Established apps (Todoist, Notion) could add capacity features. **Mitigation:** The wellness-as-constraint philosophy and goal-reality threading are the moat — ship fast and build retention.
+
+**Resource Risks:**
+- Solo developer means a smaller, more focused MVP is essential. **Mitigation:** Web-first launch with mobile following 4-6 weeks later. Admin tooling deferred to Phase 2 — Stripe dashboard handles early subscription management.
+
+## Functional Requirements
+
+### User Account Management
+
+- FR1: Users can create an account with email and password
+- FR2: Users can create an account using Google Sign-In
+- FR3: Users can create an account using Apple Sign-In
+- FR4: Users can log in to an existing account
+- FR5: Returning authenticated users are automatically redirected to the app from the landing page
+- FR6: Users can log out of their account
+- FR7: Users can delete their account and all associated data
+- FR8: Users can manage their subscription (view status, cancel, reactivate)
+
+### Onboarding & Goal Setup
+
+- FR9: New users are guided through a goal-setting flow to establish up to 3 long-term goals
+- FR10: Users who don't know their goals can access a guided discovery flow that prompts reflection questions to help identify them
+- FR11: Users can name, edit, and delete their long-term goals at any time
+- FR12: Users can skip the guided discovery flow and set goals manually
+
+### Daily Planning
+
+- FR13: Users can create todos for the current day
+- FR14: Users can assign an effort point value to each todo
+- FR15: Users can tag each todo with one of their long-term goals (or mark it as untagged)
+- FR16: Users can assign each todo to a wellness category (exercise, fun/hobby, rest)
+- FR17: Users can mark todos as complete
+- FR18: Users can edit or delete todos
+- FR19: Users can reorder todos within their daily list
+- FR20: Users are required to include at least one wellness-category todo before their day plan is considered complete
+- FR21: Users can carry incomplete todos forward to the next day
+
+### Capacity Management
+
+- FR22: The system tracks the number of effort points a user completes each day over time
+- FR23: The system displays a "learning" state during the first 7-10 days of use, with messaging that explains it is building a capacity baseline
+- FR24: The system generates a daily capacity estimate for the user once sufficient history exists (minimum 5 days)
+- FR25: The system alerts users when their planned daily point total exceeds their capacity estimate
+- FR26: The system encourages users to add more tasks when their planned total is significantly below their capacity estimate
+- FR27: Users can view their historical daily point completion data
+
+### Feedback & Reinforcement
+
+- FR28: The system delivers positive reinforcement messages when a user completes a todo
+- FR29: The system delivers positive reinforcement when a user hits or exceeds their capacity target for the day
+- FR30: The system notifies users when a long-term goal has not been touched in 3 or more days
+- FR31: The system tracks and displays goal-activity streaks (consecutive days with at least one goal-tagged todo completed)
+
+### Notifications
+
+- FR32: Users receive a configurable morning push notification to plan their day
+- FR33: Users receive a push notification when their planned list exceeds their capacity estimate
+- FR34: Users receive a push notification when a long-term goal has not been worked on for 3+ days
+- FR35: Users receive a push notification with positive reinforcement when they complete a strong day
+- FR36: Users can configure notification preferences (enable/disable each type, set notification time)
+
+### Cross-Platform & Sync
+
+- FR37: Users can access their account, goals, and todos from both the web app and the mobile app
+- FR38: Changes made on one platform are reflected on the other platform in real time when connected
+- FR39: Users can view and interact with their todo list while offline on mobile
+- FR40: Changes made offline are automatically synced to the server when connectivity is restored
+
+### Subscription & Billing
+
+- FR41: New users receive a 30-day free trial with full access to all features
+- FR42: Users are prompted to enter payment details at the end of their free trial
+- FR43: The system charges users $5/month via Stripe upon trial completion
+- FR44: Users receive notification of upcoming billing and failed payment attempts
+- FR45: Users can cancel their subscription and retain access until the end of the billing period
+
+### Landing Page & Discoverability
+
+- FR46: The public landing page is optimized for search engine indexing
+- FR47: The landing page allows new visitors to sign up for an account
+- FR48: The landing page allows existing users to log in
+- FR49: The landing page detects authenticated returning users and redirects them to the app
