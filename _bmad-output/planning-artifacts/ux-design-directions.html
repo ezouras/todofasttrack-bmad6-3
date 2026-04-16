@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tend — Design Direction Exploration</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-primary: #E8A0A0;
+    --color-primary-dark: #C97070;
+    --color-primary-light: #F5D0D0;
+    --color-accent: #F0B090;
+    --color-bg: #FDFAF7;
+    --color-surface: #FFF8F5;
+    --color-text-primary: #3D3230;
+    --color-text-secondary: #7A6865;
+    --color-text-muted: #B0A09E;
+    --color-warning: #D4A843;
+    --color-warning-bg: #FDF3DC;
+    --color-success: #7BAF8A;
+    --color-border: #EDE5E3;
+    --color-goal-1: #B8A0D4;
+    --color-goal-2: #8EB89A;
+    --color-goal-3: #E8B49A;
+    --font: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: #F0EBE8;
+    color: var(--color-text-primary);
+    padding: 40px 20px;
+  }
+
+  /* ── Nav ── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin-bottom: 8px;
+  }
+  .page-header p {
+    font-size: 15px;
+    color: #7A6865;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  .direction-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 10px 24px;
+    border-radius: 999px;
+    border: 2px solid var(--color-border);
+    background: white;
+    color: var(--color-text-secondary);
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tab-btn:hover { border-color: var(--color-primary); color: var(--color-primary-dark); }
+  .tab-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+  }
+
+  .direction-panel { display: none; }
+  .direction-panel.active { display: block; }
+
+  .direction-label {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .direction-label h2 { font-size: 22px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 6px; }
+  .direction-label p { font-size: 14px; color: var(--color-text-secondary); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+  /* ── Shared mockup wrapper ── */
+  .mockup-frame {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--color-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(61,50,48,0.12);
+  }
+
+  /* ── Shared atoms ── */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .chip-size-xs { background: rgba(232,160,160,0.30); color: var(--color-primary-dark); }
+  .chip-size-s  { background: rgba(232,160,160,0.50); color: var(--color-primary-dark); }
+  .chip-size-m  { background: rgba(232,160,160,0.70); color: var(--color-primary-dark); }
+  .chip-size-l  { background: rgba(232,160,160,0.85); color: white; }
+  .chip-size-xl { background: rgba(232,160,160,1.00); color: white; }
+  .chip-goal-1  { background: rgba(184,160,212,0.25); color: #7055A0; }
+  .chip-goal-2  { background: rgba(142,184,154,0.25); color: #3D7A55; }
+  .chip-goal-3  { background: rgba(232,180,154,0.30); color: #9A6040; }
+  .chip-wellness { background: rgba(240,176,144,0.25); color: #9A6040; }
+
+  .capacity-bar-track {
+    width: 100%;
+    height: 6px;
+    background: var(--color-border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .capacity-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .capacity-bar-fill.warning {
+    background: linear-gradient(90deg, #F0D090, var(--color-warning));
+  }
+
+  .check-circle {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--color-border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .check-circle.done {
+    background: var(--color-success);
+    border-color: var(--color-success);
+  }
+  .check-circle.done::after {
+    content: '';
+    width: 6px; height: 4px;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  /* ══════════════════════════════
+     DIRECTION A — Airy Column
+  ══════════════════════════════ */
+  .dir-a .top-bar {
+    background: var(--color-surface);
+    padding: 20px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .dir-a .logo { font-size: 20px; font-weight: 600; color: var(--color-primary-dark); letter-spacing: -0.3px; }
+  .dir-a .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--color-primary-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: var(--color-primary-dark);
+  }
+
+  .dir-a .content { padding: 40px 48px; max-width: 600px; margin: 0 auto; }
+
+  .dir-a .day-header { margin-bottom: 32px; }
+  .dir-a .day-header .date { font-size: 13px; font-weight: 500; color: var(--color-text-muted); margin-bottom: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .dir-a .day-header h1 { font-size: 28px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 20px; }
+
+  .dir-a .capacity-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .dir-a .capacity-label { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); white-space: nowrap; }
+  .dir-a .capacity-note { font-size: 12px; color: var(--color-text-muted); text-align: right; white-space: nowrap; }
+
+  .dir-a .goals-row { display: flex; gap: 8px; margin-bottom: 36px; flex-wrap: wrap; }
+  .dir-a .goal-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 500;
+  }
+  .dir-a .goal-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dir-a .goal-pill-1 { background: rgba(184,160,212,0.2); color: #7055A0; }
+  .dir-a .goal-pill-1 .dot { background: var(--color-goal-1); }
+  .dir-a .goal-pill-2 { background: rgba(142,184,154,0.2); color: #3D7A55; }
+  .dir-a .goal-pill-2 .dot { background: var(--color-goal-2); }
+  .dir-a .goal-pill-3 { background: rgba(232,180,154,0.2); color: #9A6040; }
+  .dir-a .goal-pill-3 .dot { background: var(--color-goal-3); }
+
+  .dir-a .section-label { font-size: 11px; font-weight: 600; color: var(--color-text-muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 12px; }
+
+  .dir-a .todo-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px;
+    background: var(--color-surface);
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+  .dir-a .todo-item.done { opacity: 0.55; }
+  .dir-a .todo-body { flex: 1; }
+  .dir-a .todo-title { font-size: 15px; font-weight: 400; color: var(--color-text-primary); margin-bottom: 6px; line-height: 1.4; }
+  .dir-a .todo-title.strikethrough { text-decoration: line-through; color: var(--color-text-muted); }
+  .dir-a .todo-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .dir-a .add-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 16px;
+    border: 2px dashed var(--color-border);
+    border-radius: 12px;
+    color: var(--color-text-muted);
+    font-size: 14px;
+    font-family: var(--font);
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .dir-a .add-btn:hover { border-color: var(--color-primary); color: var(--color-primary-dark); background: var(--color-primary-light); }
+  .dir-a .add-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--color-primary-dark); }
+
+  /* ══════════════════════════════
+     DIRECTION B — Two Panel
+  ══════════════════════════════ */
+  .dir-b .layout { display: flex; min-height: 520px; }
+
+  .dir-b .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    padding: 28px 20px;
+  }
+  .dir-b .logo { font-size: 18px; font-weight: 600; color: var(--color-primary-dark); margin-bottom: 32px; }
+
+  .dir-b .sidebar-section { margin-bottom: 28px; }
+  .dir-b .sidebar-label { font-size: 10px; font-weight: 600; color: var(--color-text-muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 12px; }
+
+  .dir-b .cap-widget { background: var(--color-bg); border-radius: 12px; padding: 14px; }
+  .dir-b .cap-widget .cap-num { font-size: 24px; font-weight: 600; color: var(--color-text-primary); }
+  .dir-b .cap-widget .cap-sub { font-size: 11px; color: var(--color-text-muted); margin-bottom: 10px; }
+
+  .dir-b .goal-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 8px;
+    margin-bottom: 4px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .dir-b .goal-row:hover { background: var(--color-bg); }
+  .dir-b .goal-bar { width: 3px; height: 32px; border-radius: 2px; flex-shrink: 0; }
+  .dir-b .goal-info { flex: 1; min-width: 0; }
+  .dir-b .goal-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dir-b .goal-streak { font-size: 11px; color: var(--color-text-muted); }
+
+  .dir-b .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 8px;
+    font-size: 13px; color: var(--color-text-secondary);
+    cursor: pointer; margin-bottom: 2px;
+    transition: background 0.15s;
+  }
+  .dir-b .nav-item.active { background: var(--color-primary-light); color: var(--color-primary-dark); font-weight: 500; }
+  .dir-b .nav-item:hover:not(.active) { background: var(--color-bg); }
+  .dir-b .nav-icon { font-size: 15px; }
+
+  .dir-b .main { flex: 1; padding: 28px 32px; overflow: hidden; }
+  .dir-b .main-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; }
+  .dir-b .main-title { font-size: 22px; font-weight: 600; }
+  .dir-b .main-date { font-size: 13px; color: var(--color-text-muted); }
+
+  .dir-b .todo-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .dir-b .todo-body { flex: 1; }
+  .dir-b .todo-title { font-size: 14px; color: var(--color-text-primary); margin-bottom: 5px; }
+  .dir-b .todo-title.strikethrough { text-decoration: line-through; color: var(--color-text-muted); }
+  .dir-b .todo-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .dir-b .fab {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(232,160,160,0.4);
+  }
+
+  /* ══════════════════════════════
+     DIRECTION C — Card Stack
+  ══════════════════════════════ */
+  .dir-c .top-bar {
+    background: var(--color-primary);
+    padding: 20px 28px 60px;
+  }
+  .dir-c .top-bar-inner { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .dir-c .logo { font-size: 20px; font-weight: 600; color: white; }
+  .dir-c .avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; }
+
+  .dir-c .hero-text { color: white; }
+  .dir-c .hero-text .greeting { font-size: 13px; opacity: 0.8; margin-bottom: 2px; }
+  .dir-c .hero-text h1 { font-size: 24px; font-weight: 600; margin-bottom: 16px; }
+
+  .dir-c .cap-summary { display: flex; align-items: center; gap: 10px; }
+  .dir-c .cap-track { flex: 1; height: 6px; background: rgba(255,255,255,0.3); border-radius: 999px; overflow: hidden; }
+  .dir-c .cap-fill { height: 100%; background: white; border-radius: 999px; }
+  .dir-c .cap-label { font-size: 12px; color: white; opacity: 0.85; white-space: nowrap; }
+
+  .dir-c .cards-area { padding: 0 20px; margin-top: -36px; }
+  .dir-c .todo-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(61,50,48,0.08);
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .dir-c .todo-card.done { opacity: 0.55; }
+  .dir-c .todo-body { flex: 1; }
+  .dir-c .todo-title { font-size: 15px; color: var(--color-text-primary); margin-bottom: 8px; line-height: 1.4; }
+  .dir-c .todo-title.strikethrough { text-decoration: line-through; color: var(--color-text-muted); }
+  .dir-c .todo-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .dir-c .add-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(61,50,48,0.06);
+    display: flex; align-items: center; gap: 10px;
+    color: var(--color-text-muted);
+    font-size: 14px;
+    border: 2px dashed var(--color-border);
+    cursor: pointer;
+  }
+  .dir-c .add-plus { width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; color: var(--color-primary-dark); font-size: 18px; flex-shrink: 0; }
+
+  .dir-c .goals-strip { padding: 16px 20px; display: flex; gap: 8px; overflow-x: auto; }
+  .dir-c .goal-chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 500; white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════
+     DIRECTION D — Ultra Minimal
+  ══════════════════════════════ */
+  .dir-d .frame { padding: 32px 40px; max-width: 560px; margin: 0 auto; }
+
+  .dir-d .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 36px; }
+  .dir-d .logo { font-size: 18px; font-weight: 600; color: var(--color-primary-dark); }
+  .dir-d .date-chip { font-size: 12px; font-weight: 500; color: var(--color-text-muted); background: var(--color-surface); padding: 4px 12px; border-radius: 999px; border: 1px solid var(--color-border); }
+
+  .dir-d .cap-line { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .dir-d .cap-dots { display: flex; gap: 4px; }
+  .dir-d .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dir-d .dot.filled { background: var(--color-primary); }
+  .dir-d .dot.empty { background: var(--color-border); }
+  .dir-d .dot.warning { background: var(--color-warning); }
+  .dir-d .cap-text { font-size: 12px; color: var(--color-text-muted); }
+
+  .dir-d .goals-inline { display: flex; gap: 6px; margin-bottom: 28px; }
+  .dir-d .goal-tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+  .dir-d .goal-tag-1 { background: rgba(184,160,212,0.2); color: #7055A0; }
+  .dir-d .goal-tag-2 { background: rgba(142,184,154,0.2); color: #3D7A55; }
+  .dir-d .goal-tag-3 { background: rgba(232,180,154,0.2); color: #9A6040; }
+
+  .dir-d .divider { height: 1px; background: var(--color-border); margin-bottom: 4px; }
+
+  .dir-d .todo-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .dir-d .todo-title { font-size: 15px; color: var(--color-text-primary); flex: 1; line-height: 1.4; }
+  .dir-d .todo-title.strikethrough { text-decoration: line-through; color: var(--color-text-muted); }
+  .dir-d .todo-meta { display: flex; align-items: center; gap: 6px; }
+
+  .dir-d .size-badge { font-size: 10px; font-weight: 600; color: var(--color-text-muted); letter-spacing: 0.3px; }
+  .dir-d .goal-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .dir-d .add-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 0;
+    color: var(--color-text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .dir-d .add-row:hover { color: var(--color-primary-dark); }
+
+  /* ── Notes area ── */
+  .notes-area {
+    max-width: 760px;
+    margin: 28px auto 0;
+    background: white;
+    border-radius: 16px;
+    padding: 20px 24px;
+  }
+  .notes-area h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--color-text-primary); }
+  .notes-area ul { list-style: none; }
+  .notes-area li { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; padding: 4px 0 4px 16px; position: relative; }
+  .notes-area li::before { content: '•'; position: absolute; left: 0; color: var(--color-primary); }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Tend — Design Directions</h1>
+  <p>Four layout approaches for the daily planning view. All use the same visual foundation: warm blush palette, Plus Jakarta Sans, warm cream background. Explore each to see which layout feels most like Tend.</p>
+</div>
+
+<div class="direction-tabs">
+  <button class="tab-btn active" onclick="showDir('a')">A — Airy Column</button>
+  <button class="tab-btn" onclick="showDir('b')">B — Sidebar + List</button>
+  <button class="tab-btn" onclick="showDir('c')">C — Card Stack</button>
+  <button class="tab-btn" onclick="showDir('d')">D — Ultra Minimal</button>
+</div>
+
+<!-- ══ DIRECTION A ══ -->
+<div id="dir-a" class="direction-panel active">
+  <div class="direction-label">
+    <h2>A — Airy Column</h2>
+    <p>Centered, generous whitespace. Capacity bar and goals at top, todos below. Closest to Calm's breathing-room philosophy. Feels like a personal planning journal.</p>
+  </div>
+  <div class="mockup-frame dir-a">
+    <div class="top-bar">
+      <div class="logo">tend</div>
+      <div class="avatar">EZ</div>
+    </div>
+    <div class="content">
+      <div class="day-header">
+        <div class="date">Tuesday, April 15</div>
+        <h1>Good morning, Evelyn.</h1>
+        <div class="capacity-row">
+          <div class="capacity-label">Today's capacity</div>
+          <div class="capacity-bar-track" style="flex:1"><div class="capacity-bar-fill" style="width:62%"></div></div>
+          <div class="capacity-note">14 / 22 pts</div>
+        </div>
+      </div>
+
+      <div class="goals-row">
+        <div class="goal-pill goal-pill-1"><span class="dot"></span>Vegan bakery</div>
+        <div class="goal-pill goal-pill-2"><span class="dot"></span>Marathon</div>
+        <div class="goal-pill goal-pill-3"><span class="dot"></span>Finish book</div>
+      </div>
+
+      <div class="section-label">Today's todos</div>
+
+      <div class="todo-item done">
+        <div class="check-circle done"></div>
+        <div class="todo-body">
+          <div class="todo-title strikethrough">Review bakery lease options</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-m">M</span>
+            <span class="chip chip-goal-1">Vegan bakery</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="todo-item done">
+        <div class="check-circle done"></div>
+        <div class="todo-body">
+          <div class="todo-title strikethrough">30 min run</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-s">S</span>
+            <span class="chip chip-goal-2">Marathon</span>
+            <span class="chip chip-wellness">🏃 Exercise</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="todo-item">
+        <div class="check-circle"></div>
+        <div class="todo-body">
+          <div class="todo-title">Write chapter 3 outline</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-l">L</span>
+            <span class="chip chip-goal-3">Finish book</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="todo-item">
+        <div class="check-circle"></div>
+        <div class="todo-body">
+          <div class="todo-title">Reply to supplier emails</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-s">S</span>
+            <span class="chip chip-goal-1">Vegan bakery</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="todo-item">
+        <div class="check-circle"></div>
+        <div class="todo-body">
+          <div class="todo-title">Watch pottery tutorial</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-xs">XS</span>
+            <span class="chip chip-wellness">🎨 Fun</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="add-btn">
+        <div class="add-icon">+</div>
+        Add a todo…
+      </button>
+    </div>
+  </div>
+  <div class="notes-area">
+    <h3>Direction A key traits</h3>
+    <ul>
+      <li>Centered narrow column (max 600px) — focused, not spread out</li>
+      <li>Goals shown as small pills beneath capacity — always visible but quiet</li>
+      <li>Todos as soft surface cards on cream background</li>
+      <li>Add todo as inline dashed row — low visual weight, always accessible</li>
+      <li>Closest to Calm's visual rhythm — most "journal-like"</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ DIRECTION B ══ -->
+<div id="dir-b" class="direction-panel">
+  <div class="direction-label">
+    <h2>B — Sidebar + List</h2>
+    <p>Persistent left sidebar for goals, capacity, and navigation. Main area for the todo list. More information-dense; feels more like a structured workspace.</p>
+  </div>
+  <div class="mockup-frame dir-b">
+    <div class="layout">
+      <div class="sidebar">
+        <div class="logo">tend</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Capacity</div>
+          <div class="cap-widget">
+            <div class="cap-num">14 <span style="font-size:14px;font-weight:400;color:var(--color-text-muted)">/ 22</span></div>
+            <div class="cap-sub">points planned today</div>
+            <div class="capacity-bar-track"><div class="capacity-bar-fill" style="width:64%"></div></div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Goals</div>
+          <div class="goal-row">
+            <div class="goal-bar" style="background:var(--color-goal-1)"></div>
+            <div class="goal-info">
+              <div class="goal-name">Vegan bakery</div>
+              <div class="goal-streak">3 day streak ✦</div>
+            </div>
+          </div>
+          <div class="goal-row">
+            <div class="goal-bar" style="background:var(--color-goal-2)"></div>
+            <div class="goal-info">
+              <div class="goal-name">Marathon</div>
+              <div class="goal-streak">Active today</div>
+            </div>
+          </div>
+          <div class="goal-row">
+            <div class="goal-bar" style="background:var(--color-goal-3)"></div>
+            <div class="goal-info">
+              <div class="goal-name">Finish book</div>
+              <div class="goal-streak">Last: 2 days ago</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Navigate</div>
+          <div class="nav-item active"><span class="nav-icon">☀️</span> Today</div>
+          <div class="nav-item"><span class="nav-icon">📈</span> History</div>
+          <div class="nav-item"><span class="nav-icon">🔔</span> Notifications</div>
+          <div class="nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="main-header">
+          <div class="main-title">Today</div>
+          <div class="main-date">Tuesday, April 15</div>
+        </div>
+
+        <div class="todo-item">
+          <div class="check-circle done"></div>
+          <div class="todo-body">
+            <div class="todo-title strikethrough">Review bakery lease options</div>
+            <div class="todo-chips">
+              <span class="chip chip-size-m">M</span>
+              <span class="chip chip-goal-1">Vegan bakery</span>
+            </div>
+          </div>
+        </div>
+        <div class="todo-item">
+          <div class="check-circle done"></div>
+          <div class="todo-body">
+            <div class="todo-title strikethrough">30 min run</div>
+            <div class="todo-chips">
+              <span class="chip chip-size-s">S</span>
+              <span class="chip chip-goal-2">Marathon</span>
+              <span class="chip chip-wellness">🏃 Exercise</span>
+            </div>
+          </div>
+        </div>
+        <div class="todo-item">
+          <div class="check-circle"></div>
+          <div class="todo-body">
+            <div class="todo-title">Write chapter 3 outline</div>
+            <div class="todo-chips">
+              <span class="chip chip-size-l">L</span>
+              <span class="chip chip-goal-3">Finish book</span>
+            </div>
+          </div>
+        </div>
+        <div class="todo-item">
+          <div class="check-circle"></div>
+          <div class="todo-body">
+            <div class="todo-title">Reply to supplier emails</div>
+            <div class="todo-chips">
+              <span class="chip chip-size-s">S</span>
+              <span class="chip chip-goal-1">Vegan bakery</span>
+            </div>
+          </div>
+        </div>
+        <div class="todo-item">
+          <div class="check-circle"></div>
+          <div class="todo-body">
+            <div class="todo-title">Watch pottery tutorial</div>
+            <div class="todo-chips">
+              <span class="chip chip-size-xs">XS</span>
+              <span class="chip chip-wellness">🎨 Fun</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="fab">+ Add todo</button>
+      </div>
+    </div>
+  </div>
+  <div class="notes-area">
+    <h3>Direction B key traits</h3>
+    <ul>
+      <li>Persistent sidebar — goals and capacity always in view without scrolling</li>
+      <li>Goal streaks visible at a glance in sidebar — reinforces goal connection</li>
+      <li>More information-dense than A — suits power users and desktop contexts</li>
+      <li>Navigation always accessible — better for multi-section app on web</li>
+      <li>Less "journal," more "workspace" — slightly less warm, more structured</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ DIRECTION C ══ -->
+<div id="dir-c" class="direction-panel">
+  <div class="direction-label">
+    <h2>C — Card Stack</h2>
+    <p>Blush pink header with capacity bar, goals strip below, each todo as an elevated card. More visual weight per task. Works well on mobile; feels expressive and warm.</p>
+  </div>
+  <div class="mockup-frame dir-c">
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <div class="logo">tend</div>
+        <div class="avatar">EZ</div>
+      </div>
+      <div class="hero-text">
+        <div class="greeting">Tuesday, April 15</div>
+        <h1>Good morning, Evelyn.</h1>
+        <div class="cap-summary">
+          <div class="cap-track"><div class="cap-fill" style="width:64%"></div></div>
+          <div class="cap-label">14 / 22 pts</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="goals-strip">
+      <div class="goal-chip" style="background:rgba(184,160,212,0.2);color:#7055A0">
+        <span style="width:6px;height:6px;border-radius:50%;background:#B8A0D4;display:inline-block"></span>
+        Vegan bakery
+      </div>
+      <div class="goal-chip" style="background:rgba(142,184,154,0.2);color:#3D7A55">
+        <span style="width:6px;height:6px;border-radius:50%;background:#8EB89A;display:inline-block"></span>
+        Marathon
+      </div>
+      <div class="goal-chip" style="background:rgba(232,180,154,0.2);color:#9A6040">
+        <span style="width:6px;height:6px;border-radius:50%;background:#E8B49A;display:inline-block"></span>
+        Finish book
+      </div>
+    </div>
+
+    <div class="cards-area">
+      <div class="todo-card done">
+        <div class="check-circle done"></div>
+        <div class="todo-body">
+          <div class="todo-title strikethrough">Review bakery lease options</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-m">M</span>
+            <span class="chip chip-goal-1">Vegan bakery</span>
+          </div>
+        </div>
+      </div>
+      <div class="todo-card done">
+        <div class="check-circle done"></div>
+        <div class="todo-body">
+          <div class="todo-title strikethrough">30 min run</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-s">S</span>
+            <span class="chip chip-goal-2">Marathon</span>
+            <span class="chip chip-wellness">🏃 Exercise</span>
+          </div>
+        </div>
+      </div>
+      <div class="todo-card">
+        <div class="check-circle"></div>
+        <div class="todo-body">
+          <div class="todo-title">Write chapter 3 outline</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-l">L</span>
+            <span class="chip chip-goal-3">Finish book</span>
+          </div>
+        </div>
+      </div>
+      <div class="todo-card">
+        <div class="check-circle"></div>
+        <div class="todo-body">
+          <div class="todo-title">Reply to supplier emails</div>
+          <div class="todo-chips">
+            <span class="chip chip-size-s">S</span>
+            <span class="chip chip-goal-1">Vegan bakery</span>
+          </div>
+        </div>
+      </div>
+      <div class="add-card">
+        <div class="add-plus">+</div>
+        Add a todo…
+      </div>
+    </div>
+  </div>
+  <div class="notes-area">
+    <h3>Direction C key traits</h3>
+    <ul>
+      <li>Pink header creates strong brand moment at the top — feels most distinctively "Tend"</li>
+      <li>Cards give each todo visual weight — good for short lists; can feel heavy with 8+ todos</li>
+      <li>Goals strip is scrollable — compact but always reachable</li>
+      <li>Works especially well on mobile — card pattern is very touch-friendly</li>
+      <li>More expressive and warm than A or D; less structured than B</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ DIRECTION D ══ -->
+<div id="dir-d" class="direction-panel">
+  <div class="direction-label">
+    <h2>D — Ultra Minimal</h2>
+    <p>Almost no chrome — just the list. Capacity shown as dots, goals as tiny color dots per row. For users who want their todo list to feel like a clean notebook page.</p>
+  </div>
+  <div class="mockup-frame dir-d">
+    <div class="frame">
+      <div class="top">
+        <div class="logo">tend</div>
+        <div class="date-chip">Tue, Apr 15</div>
+      </div>
+
+      <div class="cap-line">
+        <div class="cap-dots">
+          <div class="dot filled"></div>
+          <div class="dot filled"></div>
+          <div class="dot filled"></div>
+          <div class="dot filled"></div>
+          <div class="dot filled"></div>
+          <div class="dot filled"></div>
+          <div class="dot filled"></div>
+          <div class="dot empty"></div>
+          <div class="dot empty"></div>
+          <div class="dot empty"></div>
+        </div>
+        <div class="cap-text">14 of ~22 points — on track</div>
+      </div>
+
+      <div class="goals-inline">
+        <div class="goal-tag goal-tag-1">● Vegan bakery</div>
+        <div class="goal-tag goal-tag-2">● Marathon</div>
+        <div class="goal-tag goal-tag-3">● Finish book</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="todo-row">
+        <div class="check-circle done" style="width:18px;height:18px"></div>
+        <div class="todo-title strikethrough">Review bakery lease options</div>
+        <div class="todo-meta">
+          <div class="size-badge">M</div>
+          <div class="goal-dot" style="background:var(--color-goal-1)"></div>
+        </div>
+      </div>
+
+      <div class="todo-row">
+        <div class="check-circle done" style="width:18px;height:18px"></div>
+        <div class="todo-title strikethrough">30 min run</div>
+        <div class="todo-meta">
+          <div class="size-badge">S</div>
+          <div class="goal-dot" style="background:var(--color-goal-2)"></div>
+        </div>
+      </div>
+
+      <div class="todo-row">
+        <div class="check-circle" style="width:18px;height:18px"></div>
+        <div class="todo-title">Write chapter 3 outline</div>
+        <div class="todo-meta">
+          <div class="size-badge">L</div>
+          <div class="goal-dot" style="background:var(--color-goal-3)"></div>
+        </div>
+      </div>
+
+      <div class="todo-row">
+        <div class="check-circle" style="width:18px;height:18px"></div>
+        <div class="todo-title">Reply to supplier emails</div>
+        <div class="todo-meta">
+          <div class="size-badge">S</div>
+          <div class="goal-dot" style="background:var(--color-goal-1)"></div>
+        </div>
+      </div>
+
+      <div class="todo-row">
+        <div class="check-circle" style="width:18px;height:18px"></div>
+        <div class="todo-title">Watch pottery tutorial</div>
+        <div class="todo-meta">
+          <div class="size-badge">XS</div>
+          <div class="goal-dot" style="background:var(--color-accent);border-radius:2px"></div>
+        </div>
+      </div>
+
+      <div class="add-row">
+        <div class="check-circle" style="width:18px;height:18px;border-style:dashed;border-color:var(--color-text-muted)"></div>
+        <span>Add a todo…</span>
+      </div>
+    </div>
+  </div>
+  <div class="notes-area">
+    <h3>Direction D key traits</h3>
+    <ul>
+      <li>Almost invisible chrome — the todos are everything; nothing competes</li>
+      <li>Capacity shown as dots (like a progress indicator) — abstract but readable</li>
+      <li>Goal identity via color dot per row — minimal but scannable</li>
+      <li>Fastest to scan a long list — lowest visual weight per row</li>
+      <li>May feel too sparse for users who need the app to feel "present" and warm</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+function showDir(id) {
+  document.querySelectorAll('.direction-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('dir-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

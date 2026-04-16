@@ -7,6 +7,7 @@ stepsCompleted:
   - step-05-inspiration
   - step-06-design-system
   - step-07-defining-experience
+  - step-08-visual-foundation
 inputDocuments:
   - _bmad-output/planning-artifacts/prd.md
   - _bmad-output/planning-artifacts/architecture.md
@@ -244,3 +245,154 @@ The core loop is **daily planning as a morning ritual**. Users open the app and 
 - shadcn/ui components reskinned via Tailwind config — no component source modifications
 - Goal color assignment: user's first goal gets lavender, second gets sage, third gets peach — fixed assignment so colors feel personal and consistent across sessions
 - XS/S/M/L/XL effort size chips use the primary blush palette with varying opacity to signal relative weight
+
+## Defining Core Experience
+
+### The Defining Experience
+
+Tend's signature interaction: **intentional todo creation**. The moment a user types a task, taps a size (XS→XL), taps a goal chip, and — if relevant — taps a wellness icon, they've done something no plain to-do app lets them do: told themselves what this task costs and what it's for. That micro-ritual, done every day, is what makes Tend different from a notes app or a plain checklist.
+
+**Tend's headline interaction:** "Plan your day around what matters — in under two minutes."
+
+### User Mental Model
+
+Users come to Tend from one of two places:
+- **The overwhelmed list-keeper** — they've been writing everything down in Notes or Todoist with no sense of what's achievable. Mental model: a to-do list is a wishlist. Tend reframes it as a plan.
+- **The goal-aspirant who loses the thread** — they know they want to write a book or run a marathon but their daily todos never connect to that. Mental model: goals live separately from daily work. Tend collapses that gap.
+
+Both users understand the concept of a checkbox. The novel element is the **size + goal tag** pairing — two extra taps that carry significant meaning. This needs to feel like a natural extension of creating a task, not a form to fill out.
+
+### Success Criteria
+
+The todo creation flow succeeds when:
+- It takes **under 10 seconds** from tap to saved
+- The user **never has to open a separate screen** — everything inline
+- Size defaults to **M** so users can skip it when in a hurry
+- Goal tag defaults to **none** so it's always optional
+- After saving, the capacity bar updates **instantly** — the user immediately sees the impact of what they just added
+
+### Novel UX Patterns
+
+Tend combines familiar patterns in a novel way:
+- **Familiar:** text input for task title, tap-to-select chips, swipe to complete
+- **Novel:** the **XS/S/M/L/XL sizing vocabulary applied to daily tasks** — close enough to t-shirt sizing that education is minimal
+- **Novel:** the **capacity bar as a live consequence** — seeing the bar move as you add todos is new behavior that needs to feel satisfying, not stressful
+
+Teaching moment: the first time a user adds a todo and sees the capacity bar respond, a one-line tooltip ("This shows how your day is filling up") is enough. No tutorial required.
+
+### Experience Mechanics
+
+**1. Initiation:**
+- Prominent "+" button, always visible at bottom of the daily view (web: bottom-right; mobile: bottom-center)
+- Tapping slides up an inline creation row — no modal, no new screen
+
+**2. Interaction:**
+- Type title → cursor moves naturally to size chips
+- Size chips (XS / S / M / L / XL) displayed inline, M pre-selected
+- Below size: goal chips (user's 3 goals by name + color, plus "None") — single tap
+- Below goal: wellness icons (exercise / fun-hobby / rest) — optional, single tap, can skip
+- Capacity bar updates live as size is selected
+
+**3. Feedback:**
+- Capacity bar animates smoothly on size change — fills from left, warm blush color
+- If selection would push over capacity: bar shifts to amber, soft inline message appears ("You've planned more than your recent average — that's okay")
+- No blocking, no error — purely informational
+
+**4. Completion:**
+- "Add" tap (or Return on desktop) saves the todo and collapses the creation row
+- New todo appears at bottom of list with a gentle fade-in
+- Capacity bar settles at new level
+
+## Visual Design Foundation
+
+### Color System
+
+**Semantic Color Tokens:**
+
+| Token | Value | Usage |
+|---|---|---|
+| `color-primary` | `#E8A0A0` | Primary actions, active states, capacity bar fill |
+| `color-primary-dark` | `#C97070` | Hover states, pressed states |
+| `color-primary-light` | `#F5D0D0` | Subtle highlights, selected chip backgrounds |
+| `color-accent` | `#F0B090` | CTAs, positive reinforcement moments |
+| `color-bg` | `#FDFAF7` | App background |
+| `color-surface` | `#FFF8F5` | Cards, panels, todo rows |
+| `color-surface-raised` | `#FFFFFF` | Modals, popovers |
+| `color-text-primary` | `#3D3230` | Body text, headings |
+| `color-text-secondary` | `#7A6865` | Labels, metadata, secondary info |
+| `color-text-muted` | `#B0A09E` | Placeholder text, disabled states |
+| `color-warning` | `#D4A843` | Capacity over-limit indicator |
+| `color-warning-bg` | `#FDF3DC` | Warning message background |
+| `color-success` | `#7BAF8A` | Completion checkmark, day wrap-up |
+| `color-border` | `#EDE5E3` | Subtle dividers, input borders |
+
+**Goal Colors (per-slot, consistent per user):**
+
+| Token | Value | Usage |
+|---|---|---|
+| `color-goal-1` | `#B8A0D4` | Soft lavender — goal slot 1 chip + badge |
+| `color-goal-2` | `#8EB89A` | Warm sage — goal slot 2 chip + badge |
+| `color-goal-3` | `#E8B49A` | Warm peach — goal slot 3 chip + badge |
+
+**Effort Size Chip Colors (opacity scale on primary):**
+
+| Size | Opacity | Visual signal |
+|---|---|---|
+| XS | 30% | Lightest — quick task |
+| S | 50% | Light |
+| M | 70% | Default |
+| L | 85% | Heavy |
+| XL | 100% | Heaviest — significant commitment |
+
+**Accessibility:** All text/background pairings target WCAG AA minimum (4.5:1 contrast). `color-text-primary` on `color-bg` achieves ~8:1. Warning amber checked against white background. Goal colors used only for non-text UI elements (chips, badges) where AA large-text threshold (3:1) applies.
+
+### Typography System
+
+**Typeface:** Plus Jakarta Sans (Google Fonts, variable weight)
+
+| Role | Size | Weight | Line Height | Usage |
+|---|---|---|---|---|
+| `text-display` | 28px | Semibold (600) | 1.3 | Page titles, day header |
+| `text-heading` | 20px | Semibold (600) | 1.4 | Section headings |
+| `text-subheading` | 16px | Medium (500) | 1.5 | Card titles, goal names |
+| `text-body` | 15px | Regular (400) | 1.65 | Todo titles, body copy |
+| `text-label` | 13px | Medium (500) | 1.5 | Chips, tags, metadata labels |
+| `text-caption` | 12px | Regular (400) | 1.6 | Timestamps, helper text |
+
+**Mobile:** Base sizes reduced by 1px across scale; minimum body size 14px.
+
+### Spacing & Layout Foundation
+
+**Base unit:** 4px. All spacing values are multiples of 4.
+
+| Token | Value | Usage |
+|---|---|---|
+| `space-1` | 4px | Tight internal padding (chip icon gap) |
+| `space-2` | 8px | Chip padding, small gaps |
+| `space-3` | 12px | Input padding, list item internal spacing |
+| `space-4` | 16px | Section padding, card padding |
+| `space-6` | 24px | Between sections |
+| `space-8` | 32px | Page margins (mobile) |
+| `space-10` | 40px | Page margins (desktop) |
+| `space-16` | 64px | Large breathing room between major sections |
+
+**Layout:**
+- Web: max content width 720px, centered — feels like a focused document, not a dashboard
+- Mobile: full-width with 16px horizontal margin
+- Todo list rows: 56px min height — comfortable touch target on mobile, not oversized on desktop
+- Generous vertical rhythm — 24px between todo items; never cramped
+
+**Border radius:**
+- Chips and tags: `rounded-full` (fully rounded)
+- Cards and panels: `rounded-2xl` (16px) — soft, not boxy
+- Inputs: `rounded-xl` (12px)
+- Buttons: `rounded-full` for primary; `rounded-xl` for secondary
+
+### Accessibility Considerations
+
+- All interactive elements minimum 44×44px touch target (mobile)
+- Focus rings visible and high-contrast (2px `color-primary-dark` outline)
+- Color never the sole indicator of meaning — size chips labeled XS/S/M/L/XL in addition to opacity variation
+- Goal colors supplemented by goal name text on all tagged todos — color-blind users can still identify goals
+- Capacity warning uses both color (amber) and icon + text — never color alone
+- Plus Jakarta Sans has good legibility at small sizes; minimum rendered size 12px
