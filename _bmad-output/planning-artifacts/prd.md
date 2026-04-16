@@ -6,6 +6,8 @@ stepsCompleted:
   - step-02c-executive-summary
   - step-03-success
   - step-04-journeys
+  - step-05-domain
+  - step-06-innovation
 inputDocuments: []
 workflowType: 'prd'
 classification:
@@ -170,3 +172,56 @@ The delight moment: weeks in, users realize they're hitting their goals *and* en
 | Streak tracking | Laura |
 | Cross-platform sync (web + mobile) | Laura, Julie |
 | Admin dashboard + subscription management | Admin |
+
+## Domain-Specific Requirements
+
+### Compliance & Regulatory
+
+- **Global privacy compliance (GDPR + CCPA baseline):** Users have the right to export and delete all their data. Privacy policy required at launch explaining data collection, use, and retention. Consent obtained at account creation.
+- **Data retention policy:** User data retained for duration of active subscription + 90 days post-cancellation (allows reactivation). Deleted on user request within 30 days.
+- **Payment compliance:** Payments processed via third-party processor (e.g., Stripe). No raw card data stored or transmitted through application servers. PCI-DSS compliance delegated to payment processor.
+
+### Technical Constraints
+
+- **Data privacy:** Personal goals, task history, and capacity data are sensitive — encrypted at rest and in transit. No selling or sharing of user data with third parties.
+- **Wellness positioning:** App communicates factually about user behavior (points completed, capacity trends) and never makes clinical, diagnostic, or prescriptive health claims. Language is observational: *"You completed X points over 5 days — your list of Y points may be optimistic."*
+- **Account deletion:** Full data purge capability required — user-initiated, completed within 30 days.
+
+### Risk Mitigations
+
+- **Privacy policy + terms of service** required before launch — standard for any subscription product collecting personal data
+- **Wellness language guidelines** — establish internal copy standards to keep all app messaging factual and non-prescriptive
+- **Stripe integration** for subscriptions — handles payment security, recurring billing, and failed payment retries
+
+## Innovation & Novel Patterns
+
+### Detected Innovation Areas
+
+**1. Adaptive Capacity Learning**
+Most productivity apps let you add unlimited tasks. toDoFastTrack learns your *actual* daily output over time — not what you plan to do, but what you consistently complete — and uses that as a personalization baseline. The app gets smarter the longer you use it, shifting from a passive list to an active reality-check engine. This behavioral feedback loop applied to personal capacity management is uncommon in consumer productivity tools.
+
+**2. The Permission Inversion**
+Productivity apps typically make you feel behind. toDoFastTrack is architecturally designed to do the opposite: it tells you when you're *over-planning* and gives you data-backed permission to do less. This is a philosophical inversion of the standard productivity app model — the app's job is to reduce your list, not grow it.
+
+**3. Wellness as a Non-Negotiable Budget**
+Exercise, rest, and fun are not optional add-ons — they are required point allocations in every day's plan. The app won't consider a day "set up" until wellness categories are represented. This treats life balance as a system constraint rather than a nice-to-have, which is a meaningful architectural decision.
+
+**4. Goal-Reality Thread**
+Long-term goals aren't a separate vision board — they're woven into every daily task via tagging, and the app actively monitors when goals go untouched. The connection between a Tuesday todo and a 5-year dream is made explicit and tracked in real time.
+
+### Market Context & Competitive Landscape
+
+Existing productivity tools fall into two camps: simple task lists (Todoist, Things, Apple Reminders) and complex project management systems (Notion, Asana, Linear). Neither camp addresses personal capacity learning or goal-reality alignment at the individual level. The closest analogues — Habitica (gamification), Finch (wellness as self-care), and time-blocking tools — each solve one piece but not the whole. toDoFastTrack's combination of adaptive capacity + goal threading + wellness budgeting is a distinct position.
+
+### Validation Approach
+
+- **Capacity model accuracy**: Track whether app point estimates improve week-over-week vs. user's actual completions
+- **Goal touch rate**: Measure whether users who engage with goal-tagging have higher retention than those who don't
+- **Wellness allocation compliance**: Are users filling wellness categories daily? Does it correlate with retention?
+- **Overexertion alerts acted upon**: Do users actually remove tasks when warned? Track list adjustment rate post-warning
+
+### Risk Mitigation
+
+- **Capacity model cold start**: New users have no history — default to conservative capacity estimates and improve rapidly in the first 2 weeks
+- **Wellness nags becoming annoying**: Nudges must be encouraging, not guilt-inducing — copy standards and user testing critical here
+- **Goal-tagging friction**: If tagging feels like overhead, users will skip it — keep it lightweight (one tap, not a form)
