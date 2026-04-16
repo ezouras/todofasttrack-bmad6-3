@@ -14,7 +14,7 @@ workflowType: 'architecture'
 lastStep: 8
 status: 'complete'
 completedAt: '2026-04-15'
-project_name: 'toDoFastTrack'
+project_name: 'Tend'
 user_name: 'Evelynzouras'
 date: '2026-04-15'
 ---
@@ -86,7 +86,7 @@ Full-stack monorepo: React SPA (web) + Expo (mobile) + Go REST API + PostgreSQL,
 
 ```bash
 # 1. Bootstrap monorepo
-npx create-turbo@latest todoFastTrack --package-manager pnpm
+npx create-turbo@latest tend --package-manager pnpm
 
 # 2. Web app
 npm create vite@latest apps/web -- --template react-ts
@@ -96,7 +96,7 @@ npx create-expo-app apps/mobile
 
 # 4. Go API
 mkdir apps/api && cd apps/api
-go mod init github.com/<username>/todofasttrack-api
+go mod init github.com/<username>/tend-api
 go get github.com/gin-gonic/gin
 go get gorm.io/gorm
 go get gorm.io/driver/postgres
@@ -444,7 +444,7 @@ const { data: todos } = useQuery({ queryKey: ['todos', userId], queryFn: fetchTo
 ### Complete Project Directory Structure
 
 ```
-todoFastTrack/                          # Turborepo monorepo root
+tend/                                   # Turborepo monorepo root
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml                      # PR: lint, typecheck, Go tests, OpenAPI sync check

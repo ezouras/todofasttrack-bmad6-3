@@ -23,14 +23,14 @@ classification:
   projectContext: greenfield
 ---
 
-# Product Requirements Document - toDoFastTrack
+# Product Requirements Document - Tend
 
 **Author:** Evelynzouras
 **Date:** 2026-04-15
 
 ## Executive Summary
 
-toDoFastTrack is a cross-platform productivity and wellness application (web + mobile) that bridges the gap between long-term aspirations and daily task management. It targets individuals who pursue meaningful goals but chronically overcommit, burn out, or lose sight of their bigger ambitions in the noise of daily obligations. The product solves a self-worth problem masquerading as a productivity problem: users feel perpetually behind not because they lack discipline, but because their task lists are divorced from reality and from what genuinely matters to them.
+Tend is a cross-platform productivity and wellness application (web + mobile) that bridges the gap between long-term aspirations and daily task management. It targets individuals who pursue meaningful goals but chronically overcommit, burn out, or lose sight of their bigger ambitions in the noise of daily obligations. The product solves a self-worth problem masquerading as a productivity problem: users feel perpetually behind not because they lack discipline, but because their task lists are divorced from reality and from what genuinely matters to them.
 
 The app anchors every user experience around three long-term personal goals, uses an adaptive capacity model to learn realistic daily output limits, and protects time for exercise, rest, and enjoyment — treating these not as luxuries but as requirements for sustainable performance.
 
@@ -38,7 +38,7 @@ The app anchors every user experience around three long-term personal goals, use
 
 ### What Makes This Special
 
-Most productivity tools amplify the anxiety spiral: more features, more tasks, more ways to feel behind. toDoFastTrack inverts this. The core differentiator is **honest capacity management** — the app learns how many effort points a user can realistically accomplish in a day and pushes back when the list exceeds that ceiling. Users receive permission, backed by data, to do less and feel good about it.
+Most productivity tools amplify the anxiety spiral: more features, more tasks, more ways to feel behind. Tend inverts this. The core differentiator is **honest capacity management** — the app learns how many effort points a user can realistically accomplish in a day and pushes back when the list exceeds that ceiling. Users receive permission, backed by data, to do less and feel good about it.
 
 A hybrid effort-scoring system (user-assigned + app-suggested based on historical patterns) removes estimation friction while improving accuracy over time. Goal-tagging on individual todos creates a visible thread between daily actions and long-term ambitions, making progress feel meaningful rather than mechanical. Phase 2 will add social media and screen time awareness to surface where time quietly disappears before the day begins.
 
@@ -83,7 +83,7 @@ The delight moment: weeks in, users realize they're hitting their goals *and* en
 
 **Persona:** Laura, 45, senior software developer. Her real dream is opening a vegan bakery — she's been "working toward it" for three years, but her todo lists are dominated by work tasks and the bakery keeps slipping to "someday."
 
-**Opening Scene:** Laura downloads toDoFastTrack on a Sunday night, skeptical — she's tried every productivity app and they all make her feel more behind. During onboarding, the app asks her to name three long-term goals. She types: *Open a vegan bakery. Learn bread scoring techniques. Get to a healthy weight.* For the first time, her goals are written down somewhere that connects to her daily life.
+**Opening Scene:** Laura downloads Tend on a Sunday night, skeptical — she's tried every productivity app and they all make her feel more behind. During onboarding, the app asks her to name three long-term goals. She types: *Open a vegan bakery. Learn bread scoring techniques. Get to a healthy weight.* For the first time, her goals are written down somewhere that connects to her daily life.
 
 **Rising Action:** Monday morning she adds 14 todos. The app flags: *"That's 38 points — you've only completed an average of 22 points on past Mondays. Consider removing some tasks."* Annoyed, she removes three work tasks and adds *"Watch one bread scoring video (2pts)"* — her first bakery task in weeks. A wellness allocation sits unfilled; the app nudges her to add something for exercise or fun.
 
@@ -99,7 +99,7 @@ The delight moment: weeks in, users realize they're hitting their goals *and* en
 
 **Persona:** Julie, 30, journalist at a fast-paced news outlet. Two ambitious goals: write a novel and run a marathon. Her current todo app has 47 items. Her manuscript is at chapter three, where it's been for four months.
 
-**Opening Scene:** Julie hears about toDoFastTrack from a podcast. During onboarding she types: *Write my novel. Run a marathon. Be present in my relationships.* She doesn't need the guided goal discovery — she's known her goals for years. The problem is the gap between knowing and doing.
+**Opening Scene:** Julie hears about Tend from a podcast. During onboarding she types: *Write my novel. Run a marathon. Be present in my relationships.* She doesn't need the guided goal discovery — she's known her goals for years. The problem is the gap between knowing and doing.
 
 **Rising Action:** Her first daily list has 22 items. The app flags overload immediately. She ignores it and marks 9 things done — zero novel tasks, zero running. Day two: *"Yesterday you completed 18 points. Today you have 34 — want to trim it down?"* She removes overflow tasks and adds *"Write 200 words of novel (3pts)"* and *"20 min run (4pts)."* Both get done. First time in months both happened in the same day.
 
@@ -115,7 +115,7 @@ The delight moment: weeks in, users realize they're hitting their goals *and* en
 
 **Persona:** Alex, 38, feeling stuck and burned out. Knows something needs to change but can't articulate what they actually want.
 
-**Journey:** Alex opens toDoFastTrack and stares at the goal-setting prompt. Blank. The app offers guided discovery — *"What would you regret not doing in 5 years? What do you do that makes you lose track of time? What do you wish you had more of?"* Alex lands on: *Get healthier. Reconnect with photography. Spend more time offline.* None of these felt like "goals" before — but seeing them written down makes them real.
+**Journey:** Alex opens Tend and stares at the goal-setting prompt. Blank. The app offers guided discovery — *"What would you regret not doing in 5 years? What do you do that makes you lose track of time? What do you wish you had more of?"* Alex lands on: *Get healthier. Reconnect with photography. Spend more time offline.* None of these felt like "goals" before — but seeing them written down makes them real.
 
 *Capabilities revealed: guided goal discovery flow, reflection prompts, onboarding flexibility.*
 
@@ -171,10 +171,10 @@ The delight moment: weeks in, users realize they're hitting their goals *and* en
 ### Detected Innovation Areas
 
 **1. Adaptive Capacity Learning**
-toDoFastTrack learns a user's *actual* daily output over time — not what they plan to do, but what they consistently complete — and uses that as a personalization baseline. The app shifts from a passive list to an active reality-check engine. This behavioral feedback loop applied to personal capacity management is uncommon in consumer productivity tools.
+Tend learns a user's *actual* daily output over time — not what they plan to do, but what they consistently complete — and uses that as a personalization baseline. The app shifts from a passive list to an active reality-check engine. This behavioral feedback loop applied to personal capacity management is uncommon in consumer productivity tools.
 
 **2. The Permission Inversion**
-Productivity apps typically make users feel behind. toDoFastTrack is designed to do the opposite: it tells users when they're *over-planning* and gives data-backed permission to do less. The app's job is to reduce the list, not grow it.
+Productivity apps typically make users feel behind. Tend is designed to do the opposite: it tells users when they're *over-planning* and gives data-backed permission to do less. The app's job is to reduce the list, not grow it.
 
 **3. Wellness as a Non-Negotiable Budget**
 Exercise, rest, and fun are required point allocations in every day's plan — not optional. The app treats life balance as a system constraint, not a nice-to-have.
@@ -184,7 +184,7 @@ Long-term goals are woven into every daily task via tagging. The app actively mo
 
 ### Market Context & Competitive Landscape
 
-Existing productivity tools split into simple task lists (Todoist, Things, Apple Reminders) and complex project management (Notion, Asana, Linear). Neither addresses personal capacity learning or goal-reality alignment. The closest analogues — Habitica (gamification), Finch (wellness), time-blocking tools — each solve one piece but not the whole. toDoFastTrack's combination of adaptive capacity + goal threading + wellness budgeting occupies a distinct position.
+Existing productivity tools split into simple task lists (Todoist, Things, Apple Reminders) and complex project management (Notion, Asana, Linear). Neither addresses personal capacity learning or goal-reality alignment. The closest analogues — Habitica (gamification), Finch (wellness), time-blocking tools — each solve one piece but not the whole. Tend's combination of adaptive capacity + goal threading + wellness budgeting occupies a distinct position.
 
 ### Innovation Validation Metrics
 
@@ -197,7 +197,7 @@ Existing productivity tools split into simple task lists (Todoist, Things, Apple
 
 ### Architecture Overview
 
-toDoFastTrack consists of three layers sharing a single data model: a React SPA (web), a React Native mobile app (iOS + Android), and a shared REST API backend with PostgreSQL database. User account, goals, todos, and capacity history are consistent across all surfaces.
+Tend consists of three layers sharing a single data model: a React SPA (web), a React Native mobile app (iOS + Android), and a shared REST API backend with PostgreSQL database. User account, goals, todos, and capacity history are consistent across all surfaces.
 
 ### Web Application
 

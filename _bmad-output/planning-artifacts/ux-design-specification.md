@@ -10,16 +10,20 @@ stepsCompleted:
   - step-08-visual-foundation
   - step-09-design-directions
   - step-10-user-journeys
+  - step-11-component-strategy
+  - step-12-ux-patterns
+  - step-13-responsive-accessibility
+  - step-14-complete
 inputDocuments:
   - _bmad-output/planning-artifacts/prd.md
   - _bmad-output/planning-artifacts/architecture.md
 workflowType: 'ux-design'
-project_name: 'toDoFastTrack'
+project_name: 'Tend'
 user_name: 'Evelynzouras'
 date: '2026-04-15'
 ---
 
-# UX Design Specification — toDoFastTrack
+# UX Design Specification — Tend
 
 **Author:** Evelynzouras
 **Date:** 2026-04-15
@@ -32,7 +36,7 @@ date: '2026-04-15'
 
 ### Project Vision
 
-toDoFastTrack is a daily planning app built around 3 long-term personal goals. Users assign effort points to each todo (like Jira story points), tag them to goals and wellness categories (exercise, fun/hobby, rest), and the app learns their personal daily capacity over time. The core promise: realistic planning that protects users from burnout while keeping their long-term ambitions visible in daily life. Available as a web app and mobile app ($5/month, 30-day free trial).
+Tend is a daily planning app built around 3 long-term personal goals. Users assign effort points to each todo (like Jira story points), tag them to goals and wellness categories (exercise, fun/hobby, rest), and the app learns their personal daily capacity over time. The core promise: realistic planning that protects users from burnout while keeping their long-term ambitions visible in daily life. Available as a web app and mobile app ($5/month, 30-day free trial).
 
 ### Target Users
 
@@ -60,7 +64,7 @@ toDoFastTrack is a daily planning app built around 3 long-term personal goals. U
 
 2. **Goal tagging as identity, not taxonomy** — Seeing daily todos visually mapped to real long-term aspirations could be genuinely motivating. Goal badges and streaks should feel expressive, not administrative.
 
-3. **Daily completion as a ritual** — A satisfying, warm end-of-day moment — not just a counter — could be the emotional hook that makes toDoFastTrack a habit rather than just another productivity tool.
+3. **Daily completion as a ritual** — A satisfying, warm end-of-day moment — not just a counter — could be the emotional hook that makes Tend a habit rather than just another productivity tool.
 
 ## Core User Experience
 
@@ -105,7 +109,7 @@ The core loop is **daily planning as a morning ritual**. Users open the app and 
 
 ### Primary Emotional Goals
 
-**Calm and grounded** is the north star. toDoFastTrack should feel like a deep breath, not a productivity dashboard. Users — especially those prone to anxiety about their to-do lists — should consistently leave the app feeling more settled than when they opened it, not more pressured.
+**Calm and grounded** is the north star. Tend should feel like a deep breath, not a productivity dashboard. Users — especially those prone to anxiety about their to-do lists — should consistently leave the app feeling more settled than when they opened it, not more pressured.
 
 **Connected to purpose** is the secondary goal. Not motivational-poster inspiration, but the quiet, real feeling of seeing daily work connecting to something that actually matters. The difference between "I replied to 14 emails" and "I spent an hour on my book today."
 
@@ -433,3 +437,416 @@ Direction A best embodies Tend's emotional brief:
 - Capacity bar: thin (6px), blush gradient, sits beneath the date heading
 - Goal pills: small `rounded-full` chips with dot + name, horizontally scrollable if needed
 - "Add todo" as a dashed inline row at bottom of list — no floating action button on web
+
+## User Journey Flows
+
+### Journey 1: First-Time Onboarding (Goal Discovery)
+
+The highest-stakes flow — users who don't have clear goals must feel supported, not interrogated.
+
+```mermaid
+flowchart TD
+    A([App opens — new user]) --> B[Sign up with email / Google / Apple]
+    B --> C[Welcome screen:\n'Tend helps you plan days\nthat actually work for you.']
+    C --> D{Do you have goals\nin mind?}
+    D -->|Yes — I know them| E[Goal Setup Form\nType up to 3 goals]
+    D -->|Not sure — help me think| F[Goal Discovery Flow\nReflective prompt 1:\n'What would you work on if\nyou had a free Saturday?']
+    F --> G[Prompt 2:\n'What do you wish you made\nmore time for?']
+    G --> H[Prompt 3:\n'What would feel meaningful\nin 6 months?']
+    H --> I[Suggested goals shown\nbased on answers]
+    I --> J{Happy with these?}
+    J -->|Yes| K[Goals confirmed]
+    J -->|Edit them| E
+    E --> K
+    K --> L[Goals assigned colors\nlavender / sage / peach]
+    L --> M[Brief orientation:\n'Each day, add todos, give them\na size, and tag them to a goal.']
+    M --> N([Today view — ready to plan])
+```
+
+**Key UX decisions:**
+- Skip button always visible — no user is trapped in discovery
+- Discovery prompts are conversational, one at a time — never a form with 3 fields
+- Goal color assignment is automatic — users don't pick colors, they just appear
+
+### Journey 2: Morning Planning (Daily Core Loop)
+
+The interaction users will do every single day. Must be under 2 minutes for a typical 5-todo day.
+
+```mermaid
+flowchart TD
+    A([User opens app — morning]) --> B{Yesterday's incomplete\ntodos exist?}
+    B -->|Yes| C[Carry-forward prompt:\n'These didn't get done yesterday.'\nShow todos one at a time]
+    C --> D{Keep or skip each?}
+    D -->|Keep| E[Added to today's list]
+    D -->|Skip| F[Dismissed]
+    E & F --> G{More yesterday's todos?}
+    G -->|Yes| C
+    G -->|No| H[Today view]
+    B -->|No| H
+    H --> I[User taps dashed 'Add a todo…' row]
+    I --> J[Inline creation row expands:\nTitle input focused]
+    J --> K[User types todo title]
+    K --> L[Size chips appear:\nXS / S / M / L / XL\nM pre-selected]
+    L --> M[User taps size]
+    M --> N[Goal chips appear:\nGoal 1 / Goal 2 / Goal 3 / None\nNone pre-selected]
+    N --> O{Tag a goal?}
+    O -->|Yes| P[Goal chip selected]
+    O -->|Skip| Q[Wellness icons appear:\n🏃 Exercise / 🎨 Fun / 😴 Rest]
+    P --> Q
+    Q --> R{Add wellness tag?}
+    R -->|Yes| S[Icon selected]
+    R -->|Skip| T[Tap Add or press Return]
+    S --> T
+    T --> U[Todo saved — fades into list]
+    U --> V[Capacity bar updates smoothly]
+    V --> W{Capacity exceeded?}
+    W -->|Yes| X[Soft amber bar +\ninline note: 'You've planned more\nthan your recent average — that's okay']
+    W -->|No| Y{More todos to add?}
+    X --> Y
+    Y -->|Yes| I
+    Y -->|No| Z([Planning complete])
+```
+
+### Journey 3: Capacity Learning State → First Estimate
+
+The signature Tend moment — the transition from "learning" to "I know your pace."
+
+```mermaid
+flowchart TD
+    A([New user — day 1]) --> B[Capacity bar shows:\n'Learning your pace —\ncheck back in a few days']
+    B --> C[Days 2-4: same message\nBar shows daily todos but no estimate]
+    C --> D[Day 5: enough data]
+    D --> E[Next time user opens app:\nCapacity bar animates in\nwith first estimate]
+    E --> F[One-time reveal message:\n'We've been paying attention.\nYou tend to accomplish around\n18 points on a good day.']
+    F --> G{User plans day}
+    G --> H{Under capacity?}
+    H -->|Significantly under| I[Gentle encouragement:\n'You have room for more\nif you want it.']
+    H -->|On track| J[No message — bar stays blush]
+    H -->|Over capacity| K[Amber bar +\n'You've planned more than usual —\nfeel free to remove something.']
+    I & J & K --> L([Day proceeds normally])
+```
+
+### Journey 4: Todo Completion & Reinforcement
+
+The moment of satisfaction — must feel warm, never hollow.
+
+```mermaid
+flowchart TD
+    A([User taps checkbox on todo]) --> B[Checkmark animates in\nGentle fade + strikethrough]
+    B --> C{Was this goal-tagged?}
+    C -->|Yes| D[Quiet inline note beneath todo:\n'One more step toward\nyour bakery goal.']
+    C -->|No| E[No additional message]
+    D & E --> F{Did this complete the day's\nlast remaining todo?}
+    F -->|No| G([List continues normally])
+    F -->|Yes| H{Did user hit\ncapacity target?}
+    H -->|Yes — strong day| I[Warm inline message:\n'You had a solid day.\nEverything you planned, done.']
+    H -->|Partial day| J[Neutral — no message\njust completed state]
+    I & J --> K{User taps 'Wrap up today'?}
+    K -->|Yes — explicit| L[Day Summary screen:\nPoints completed / Goal touched /\nWarm sign-off message]
+    K -->|No — skips it| M([Day closes at midnight automatically])
+    L --> M
+```
+
+### Journey 5: Goal Nudge (3-Day Inactivity)
+
+The gentle accountability check — must never feel like guilt.
+
+```mermaid
+flowchart TD
+    A([Server detects: Goal 'Finish book'\nnot touched in 3 days]) --> B[Push notification sent:\n'Your book goal hasn't come up lately.\nWant to add something today?']
+    B --> C{User taps notification?}
+    C -->|Yes| D[Opens to Today view\nGoal pill for 'Finish book' subtly highlighted]
+    C -->|Dismisses| E([No further action — not repeated\nfor another 3 days])
+    D --> F{Adds a goal-tagged todo?}
+    F -->|Yes| G[Todo added normally\nHighlight fades]
+    F -->|No — just looks| H([User in control — no follow-up message])
+    G & H --> I([Normal day continues])
+```
+
+### Journey Patterns
+
+- **Entry pattern — always from the list:** Every action in Tend starts from or returns to the Today view. No dead ends, no orphaned screens.
+- **Progressive disclosure on todo creation:** Title → Size → Goal → Wellness. Each field appears after the previous, reducing cognitive load. Users can stop at any point.
+- **Soft interruption pattern:** Carry-forward prompts and capacity warnings never block the user. They can always dismiss or ignore and proceed.
+- **Warm + specific copy pattern:** Every reinforcement message names the specific goal or action — never generic.
+- **Silence as a design choice:** Not every event triggers a message. Partial completion, dismissing notifications, and skipping carry-forward all result in no follow-up pressure.
+
+### Flow Optimization Principles
+
+1. **Every flow has an escape** — skip, dismiss, or ignore is always available; never trapped
+2. **Default states remove decisions** — size defaults to M, goal defaults to none; the todo gets added either way
+3. **Feedback is immediate** — capacity bar responds before the todo is saved (on size selection)
+4. **Flows end at the Today view** — onboarding, wrap-up, and notifications all route back to the same home base
+5. **Mobile and web flows are identical** — same steps, same decisions; only the interaction surface (tap vs. click) changes
+
+## Component Strategy
+
+### Design System Components (shadcn/ui — use as-is or lightly reskinned)
+
+| Component | Usage in Tend |
+|---|---|
+| `Button` | Primary CTA (Add todo, Wrap up today), secondary actions |
+| `Input` | Todo title text field in creation row |
+| `Checkbox` | Todo completion toggle |
+| `Dialog` | Account deletion confirmation |
+| `Toast` | Transient system messages (sync status, offline indicator) |
+| `Separator` | Section dividers in settings |
+| `Avatar` | User profile in top bar |
+| `Switch` | Notification preference toggles |
+| `Tabs` | History view (week / month / all time) |
+
+### Custom Components
+
+**`CapacityBar`**
+Visualizes today's planned effort against the user's learned capacity estimate.
+- States: `learning` / `on-track` / `over-capacity` / `first-reveal`
+- Anatomy: 6px track + blush/amber gradient fill + label row (left: "Today's capacity" / right: "X / Y pts")
+- Accessibility: `role="progressbar"`, `aria-valuenow`, `aria-valuemax`
+
+**`SizeChip`**
+XS/S/M/L/XL effort size selector, inline during todo creation.
+- 5 tappable chips in a row; M pre-selected; opacity scale on primary color
+- Accessibility: `role="radiogroup"` + `role="radio"` per chip; arrow key navigation
+
+**`GoalChip`**
+Goal tag selector (creation) and identity pill (day header, todo rows).
+- Variants: `selector` (creation row) / `pill` (day header) / `badge` (todo row)
+- Colored dot always accompanied by goal name text — color never sole identifier
+
+**`WellnessIcon`**
+Optional wellness category tag (exercise / fun-hobby / rest).
+- 3 icon buttons with emoji + label; single-select; tapping again deselects
+- Accessibility: `aria-label` on each; label always visible alongside icon
+
+**`TodoRow`**
+Single todo in the daily list.
+- States: `active` / `complete` (55% opacity, strikethrough) / `dragging`
+- Anatomy: checkbox + title + chip row (size + goal badge + wellness badge)
+- Reorder: long-press mobile / drag handle on hover desktop
+
+**`TodoCreationRow`**
+Inline todo creation — expands in place at bottom of list.
+- Collapsed: dashed "Add a todo…" row
+- Expanded: title input → SizeChip → GoalChip → WellnessIcon → Add button (progressive disclosure)
+- ESC collapses without saving; Return submits
+
+**`GoalNudgeMessage`**
+Inline reinforcement after completing a goal-tagged todo.
+- Variants: `goal-completion` / `day-complete`
+- Fades out after 4s or on next user action
+- `role="status"`, `aria-live="polite"`
+
+**`CarryForwardPrompt`**
+Morning prompt showing yesterday's incomplete todos one at a time.
+- "Keep" / "Skip" per todo; focus trapped until dismissed; keyboard accessible
+
+**`DaySummaryScreen`**
+Optional end-of-day wrap-up (triggered by "Wrap up today").
+- Points completed / Goals touched / Warm specific sign-off / Close button
+- Copy rule: message is specific to the day's data — never generic templated praise
+
+**`CapacityRevealCard`**
+One-time first-estimate reveal at day 5-7 on app open.
+- Animated bar entrance + specific message + dismiss
+- Shown once, permanently dismissed after
+
+### Implementation Roadmap
+
+**Phase 1 — Core (daily planning must work):**
+`TodoRow` · `TodoCreationRow` · `SizeChip` · `GoalChip` · `CapacityBar` (learning state)
+
+**Phase 2 — Completion loop (reinforcement must work):**
+`WellnessIcon` · `GoalNudgeMessage` · `CapacityBar` (on-track + over-capacity) · `CarryForwardPrompt`
+
+**Phase 3 — Signature moments (emotional design must land):**
+`CapacityRevealCard` · `DaySummaryScreen`
+
+## UX Consistency Patterns
+
+### Button Hierarchy
+
+| Level | Style | Usage |
+|---|---|---|
+| **Primary** | Filled, `color-primary`, `rounded-full` | One per screen max — "Add todo", "Wrap up today", "Save goal" |
+| **Secondary** | Outlined, `color-border` border, transparent fill | "Skip", "Cancel", "Edit" |
+| **Ghost** | No border, no fill, `color-text-secondary` text | "Dismiss", inline text actions |
+| **Destructive** | Outlined, `color-warning` text | "Delete todo", "Remove goal" — always requires confirmation |
+
+Rules: Never two primary buttons on the same screen. Destructive actions always require a confirmation Dialog. Buttons are `rounded-full` (primary) or `rounded-xl` (secondary/ghost) — never square.
+
+### Feedback Patterns
+
+**Inline contextual feedback** (preferred for all non-destructive messages):
+- Capacity warning: amber bar + single-line note directly below capacity bar
+- Reinforcement: `GoalNudgeMessage` beneath the relevant todo row, fades after 4s
+- Carry-forward: `CarryForwardPrompt` at top of Today view on morning open
+
+**Toast notifications** (system-level, non-blocking only):
+- "Changes saved" — 1.5s, no dismiss
+- "You're offline — changes will sync when you reconnect" — persists until reconnected
+- "Synced" — 1s after reconnect
+- Position: bottom-center (mobile) / bottom-right (desktop)
+- Never use toasts for reinforcement or capacity messages
+
+**Colors:** Informational (`color-surface` bg) / Positive (`color-success` left border) / Warning (`color-warning-bg` bg + `color-warning` border). No red — ever.
+
+### Form Patterns
+
+**Todo creation:** Progressive disclosure only; all fields optional except title; defaults handle missing values; no validation errors while typing.
+
+**Goal setup:** One field at a time; auto-saved on blur; no save button per goal.
+
+**Settings:** Label above field; `Switch` for binary preferences; changes save immediately on toggle.
+
+**Validation:** Only on submit attempt; input border changes to `color-warning` + single line below — never modal; no inline validation while typing.
+
+### Navigation Patterns
+
+**Web:** Top bar (logo left, avatar right); navigation via avatar menu; active route has `color-primary-light` background.
+
+**Mobile:** Bottom tab bar (Today / Goals / History / Settings); always visible during scroll; active tab uses `color-primary`.
+
+**Depth:** Max 2 levels — no breadcrumbs needed.
+
+### Empty States
+
+- **Today — no todos:** "What do you want to get done today?" + dashed add row; no illustration
+- **Today — learning period:** Capacity bar in `learning` state; todos list normally
+- **Goals — none set:** "Add up to 3 goals to start tagging your todos" + single CTA
+- **History — no data:** "Keep going — your history will appear here after your first few days"
+
+### Loading States
+
+- **Initial load:** Skeleton screens (3 placeholder todo rows, shimmer in `color-border`)
+- **Mutations:** All optimistic — no loading indicator on todo add, complete, or resize
+- **Sync reconnecting:** Small pulsing dot in top bar — not a spinner, not a banner
+- **No full-page spinners** — skeleton screens only
+
+### Micro-interaction Patterns
+
+- **Todo completion:** Checkmark fills `color-success` over 200ms; title fades + strikethrough over 300ms
+- **Capacity bar:** Width animates over 400ms ease-in-out on todo add/remove/resize
+- **Creation row expand:** Slides down over 200ms; eased, not bouncy
+- **GoalNudgeMessage:** Fades in 150ms; fades out 300ms after 4s or next action
+- **No confetti, sparkles, or sound** — all micro-interactions are quiet and purposeful
+
+### Copy & Tone Patterns
+
+- Capacity copy is always **observational**: "You tend to accomplish around X points" — never "Your limit is X"
+- Reinforcement copy is always **specific**: names the goal or task — never "Great job!" alone
+- Warning copy is always **permissive**: "that's okay" / "feel free to" — never alarming
+- Empty state copy is **warm, not instructional**: "What do you want to get done today?" not "Click + to add a task"
+- **No exclamation points** in system messages — warmth comes from specificity, not punctuation energy
+
+---
+
+## Responsive Design & Accessibility
+
+### Responsive Strategy
+
+**Desktop (Primary Launch Platform)**
+Tend's Direction A Airy Column layout is inherently responsive-friendly — a centered, max-width column means the design is already contained. On wider screens (1280px+), the column stays centered with generous whitespace on both sides, reinforcing the journal-like breathing room. No multi-column breakout; the focused single-column experience is intentional even on large monitors.
+
+**Tablet**
+At tablet widths (768px–1023px), the column expands to fill ~85% of the viewport. Navigation stays in the top bar. Touch targets are honored (44×44px minimum). The capacity bar and goal chips remain full-width within the column.
+
+**Mobile Web (pre-app)**
+Before the React Native app launches, mobile web users get a responsive single-column layout. The column fills ~92% of the viewport. Bottom safe-area padding accounts for iOS home indicator. The primary CTA and daily todo list are fully usable without pinch-zoom.
+
+**React Native (Mobile App)**
+Expo + NativeWind handles the mobile-native experience. Layouts are column-by-default, same visual language as web. Swipe gestures for todo completion and carry-forward. Bottom navigation tab bar. Full offline support.
+
+---
+
+### Breakpoint Strategy
+
+Desktop-first with graceful mobile fallback (aligned with web-first launch priority):
+
+| Name | Range | Layout Behavior |
+|---|---|---|
+| `sm` | 320px–599px | Full-width column, 16px padding |
+| `md` | 600px–767px | Column hits max-width (600px), centered |
+| `lg` | 768px–1023px | Same centered column, nav refinements |
+| `xl` | 1024px–1279px | Wider whitespace flanking column |
+| `2xl` | 1280px+ | Maximum whitespace, column fixed at 600px |
+
+Tailwind CSS v4 standard breakpoints used as-is; the 600px column max-width is a CSS `max-w` constraint, not a custom breakpoint.
+
+---
+
+### Accessibility Strategy
+
+**Target Compliance: WCAG 2.1 AA** (matches NFR15 in architecture)
+
+**Color & Contrast**
+- All body text on cream background (#FDFAF7): contrast ratio verified ≥ 4.5:1
+- Blush rose (#E8A0A0) used only for decorative/accent elements, never as the sole carrier of meaning
+- No red anywhere — amber (#D4A843) used for warnings; amber on cream passes AA at 14px bold+
+- Goal colors (lavender #B8A0D4, sage #8EB89A, peach #E8B49A) used as chip backgrounds with dark text overlaid — each pair verified ≥ 4.5:1
+
+**Focus & Keyboard**
+- All interactive elements have a visible focus ring (2px, offset, blush rose tone)
+- Tab order follows visual reading order (top to bottom, left to right within column)
+- Modals trap focus; restore focus to trigger on close
+- Skip-to-content link at page top (visually hidden until focused)
+
+**Screen Reader**
+- Semantic HTML throughout: `<main>`, `<nav>`, `<section>`, `<button>`, `<ul>`/`<li>` for todo lists
+- ARIA live regions for capacity feedback messages and completion celebrations (`aria-live="polite"` — announce without redirecting focus)
+- Goal chips: `aria-label="[Goal name] tag"`
+- Effort size chips: `aria-label="Effort: [size]"`
+- Completion animation: `prefers-reduced-motion` respected — fades instead of motion
+
+**Touch & Motor**
+- Minimum 44×44px touch targets on all buttons, chips, checkboxes
+- Full todo row is tappable (not just the checkbox)
+- Swipe-to-carry-forward has a tap-based alternative (long-press menu) for motor accessibility
+
+**Wellness Language**
+- Screen reader announcements for capacity warnings use the same calm, observational tone as visual copy — never alarming
+
+---
+
+### Testing Strategy
+
+**Responsive Testing**
+- Primary: Chrome DevTools device simulation across all breakpoints
+- Real device: iPhone (Safari), Android (Chrome), iPad
+- Browser matrix: Chrome, Firefox, Safari, Edge (latest 2 versions)
+- Verify column max-width behavior at 599px, 600px, and 601px (key breakpoint boundary)
+
+**Accessibility Testing**
+- Automated: axe-core integrated into Vite dev build; axe DevTools browser extension for manual passes
+- Screen readers: VoiceOver (macOS + iOS), NVDA (Windows)
+- Keyboard-only: complete the full daily planning flow without a mouse
+- Color blindness: Sim Daltonism / Chromatic extension — verify goal chips distinguishable in deuteranopia and protanopia modes
+- Reduced motion: test with `prefers-reduced-motion: reduce` set in OS
+
+**Mobile Accessibility (React Native)**
+- iOS: VoiceOver full-flow test
+- Android: TalkBack full-flow test
+- Follows iOS HIG and Android Material accessibility guidelines (NFR16)
+
+---
+
+### Implementation Guidelines
+
+**Responsive Development**
+- Use `rem` for typography (base 16px), `px` only for borders/shadows
+- Tailwind `max-w-[600px]` + `mx-auto` + responsive horizontal padding (`px-4 md:px-0`) for main column
+- Images use `max-w-full`; no fixed pixel widths on content elements
+- Test column at 320px — minimum supported mobile width
+
+**Accessibility Development**
+- All interactive elements use `<button>` (never `<div onClick>`)
+- ARIA live region for capacity/reinforcement messages: `aria-live="polite"` (not assertive)
+- `aria-describedby` on todo items to associate effort + goal chips with their parent task
+- Checkboxes are native `<input type="checkbox">` with visible custom CSS styling (not div-based replacements)
+- Focus visible class applied globally; do not suppress `:focus-visible` outline
+- Implement `prefers-reduced-motion` check in animation utilities — all entry/exit animations fallback to opacity-only transitions
+
+**React Native Accessibility**
+- `accessibilityLabel` on all interactive elements
+- `accessibilityRole` declared: `button`, `checkbox`, `text`
+- `accessibilityLiveRegion` for reinforcement toasts
+- Minimum 44pt touch targets enforced via `minHeight`/`minWidth` style rules
