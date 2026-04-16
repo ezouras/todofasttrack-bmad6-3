@@ -8,6 +8,7 @@ stepsCompleted:
   - step-04-journeys
   - step-05-domain
   - step-06-innovation
+  - step-07-project-type
 inputDocuments: []
 workflowType: 'prd'
 classification:
@@ -225,3 +226,48 @@ Existing productivity tools fall into two camps: simple task lists (Todoist, Thi
 - **Capacity model cold start**: New users have no history — default to conservative capacity estimates and improve rapidly in the first 2 weeks
 - **Wellness nags becoming annoying**: Nudges must be encouraging, not guilt-inducing — copy standards and user testing critical here
 - **Goal-tagging friction**: If tagging feels like overhead, users will skip it — keep it lightweight (one tap, not a form)
+
+## Full-Stack Specific Requirements
+
+### Project-Type Overview
+
+toDoFastTrack is a cross-platform consumer application consisting of three layers: a React SPA (web), a React Native mobile app (iOS + Android), and a shared REST API backend with a persistent database. All three layers share a single data model — user account, goals, todos, and capacity history are consistent across surfaces.
+
+### Web Application
+
+- **Architecture:** Single-Page Application (React) — no full page reloads after initial load
+- **Public landing page:** SEO-optimized marketing page (discoverable via Google) with clear value proposition, sign-up CTA, and login option
+- **Session detection:** Landing page detects returning authenticated users via cookie/session token and redirects them directly to the app (or auto-logs them in if token is valid and unexpired)
+- **Authenticated app:** Full todo/goal interface lives behind authentication — not publicly indexed
+- **Browser support:** Modern browsers (Chrome, Firefox, Safari, Edge) — no IE support required
+- **Responsive design:** Web app must be fully usable on mobile browsers, not just desktop
+- **Performance target:** Initial load under 3 seconds; SPA transitions under 300ms
+
+### Mobile Application
+
+- **Platform:** Cross-platform via React Native — single codebase targeting iOS and Android
+- **Store compliance:** Must meet Apple App Store and Google Play Store submission requirements at launch
+- **Push notifications:**
+  - Morning planning reminder (configurable time)
+  - Overexertion alert ("your list today is over your typical capacity")
+  - Goal nudge ("you haven't worked toward [goal] in X days")
+  - Positive reinforcement ("great day — you hit your capacity target!")
+- **Offline support:** Offline-first architecture — today's todos and goals stored locally on device (AsyncStorage / SQLite). Changes made offline sync automatically when connection is restored. Conflict resolution: last-write-wins for todo status; server authoritative for capacity model data.
+
+### Backend & API
+
+- **Architecture:** REST API serving both web and mobile clients
+- **Authentication:**
+  - Email/password (with secure password hashing)
+  - OAuth via Google Sign-In and Apple Sign-In
+  - JWT session tokens with refresh token rotation
+  - Cookie-based session for web; token-based for mobile
+- **Database:** Relational database (PostgreSQL recommended) — user accounts, goals, todos, daily point history, capacity model snapshots
+- **Data sync:** API designed for efficient mobile sync — endpoints support fetching changes since last sync timestamp
+- **Subscription management:** Stripe integration for $5/month subscription — webhook handling for payment events (success, failure, cancellation)
+
+### Implementation Considerations
+
+- **Monorepo recommended:** Shared types, utilities, and API client code between web and React Native to reduce duplication
+- **Capacity model:** Server-side calculation — not client-side — so data is consistent across devices and survives app reinstalls
+- **Environment separation:** Development, staging, and production environments required before launch
