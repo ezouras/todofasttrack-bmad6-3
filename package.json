@@ -7,7 +7,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "generate:types": "cd apps/api && swag init -g cmd/server/main.go -o ./docs && cd ../.. && openapi-typescript apps/api/docs/swagger.json -o packages/types/generated/api.ts"
+    "generate:types": "cd apps/api && \"$(go env GOPATH)/bin/swag\" init -g cmd/server/main.go -o ./docs --v3.1 && cd ../.. && openapi-typescript apps/api/docs/swagger.json -o packages/types/generated/api.ts"
   },
   "devDependencies": {
     "openapi-typescript": "^7.4.4",

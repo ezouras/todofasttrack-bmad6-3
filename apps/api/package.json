@@ -1,0 +1,12 @@
+{
+  "name": "@repo/api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "go run ./cmd/server",
+    "build": "go build -o tend-api ./cmd/server",
+    "lint": "go vet ./...",
+    "typecheck": "go vet ./...",
+    "test": "go test ./..."
+  }
+}
