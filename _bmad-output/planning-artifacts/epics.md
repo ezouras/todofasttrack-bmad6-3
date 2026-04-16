@@ -1366,3 +1366,153 @@ So that positive reinforcement reaches me even after I've closed the app.
 **Given** a user taps the strong-day notification,
 **When** the app opens,
 **Then** they are taken to the today view (no special screen — the moment already passed)
+
+---
+
+## Epic 8: Mobile App & Real-Time Sync
+
+Users have full access to Tend on iOS and Android with offline-first support. Changes sync across platforms within 5 seconds via SSE. The mobile app mirrors all web features with a touch-optimized interface.
+
+### Story 8.1: React Native App Foundation
+
+As a **user**,
+I want to access Tend as a native iOS and Android app,
+So that I can plan and check off todos from my phone with a native feel.
+
+**Acceptance Criteria:**
+
+**Given** the Expo app is opened on iOS or Android,
+**When** it launches,
+**Then** the app starts within 2 seconds on mid-range devices (NFR2) and displays the Tend visual identity (blush palette, Plus Jakarta Sans via NativeWind)
+
+**Given** a user opens the mobile app for the first time,
+**When** no Clerk session exists,
+**Then** they are routed to the sign-in/sign-up screen with email/password and social auth options (same auth methods as web)
+
+**Given** an authenticated user opens the mobile app,
+**When** the app loads,
+**Then** they are routed to today's view and their todos are fetched from `GET /api/v1/todos?date=today`
+
+**Given** the mobile app layout,
+**When** rendered on any screen,
+**Then** the bottom tab bar (Today / Goals / History / Settings) is always visible and the active tab uses `color-primary`
+
+**Given** the React Native app,
+**When** any interactive element is rendered,
+**Then** it has `accessibilityLabel`, `accessibilityRole`, and meets the 44pt minimum touch target size (NFR16, UX-DR18)
+
+---
+
+### Story 8.2: Full Feature Parity on Mobile
+
+As a **mobile user**,
+I want access to all the same features I have on the web — goal management, daily planning, capacity feedback, reinforcement, and settings,
+So that I can use Tend fully from my phone without needing to switch to a browser.
+
+**Acceptance Criteria:**
+
+**Given** a mobile user navigates to the Today tab,
+**When** the view renders,
+**Then** the full daily planning flow works identically to web: todo creation (with inline SizeChip, GoalChip, WellnessIcon), completion, edit, delete, reorder via long-press drag, and carry-forward prompt on first daily open
+
+**Given** a mobile user navigates to the Goals tab,
+**When** the view renders,
+**Then** they can view, edit, and delete goals with the same behavior as web
+
+**Given** a mobile user navigates to the History tab,
+**When** the view renders,
+**Then** their daily point completion history is displayed
+
+**Given** a mobile user navigates to Settings,
+**When** the view renders,
+**Then** they can manage notification preferences, view subscription status, and access account settings (log out, delete account)
+
+**Given** the CapacityBar, GoalNudgeMessage, CarryForwardPrompt, DaySummaryScreen, and CapacityRevealCard components,
+**When** rendered in the React Native app,
+**Then** they use NativeWind equivalents of the web Tailwind styles and behave identically to their web counterparts
+
+---
+
+### Story 8.3: Offline-First Todo Access
+
+As a **mobile user without network access**,
+I want to view and check off todos while offline,
+So that my planning routine isn't interrupted by poor connectivity.
+
+**Acceptance Criteria:**
+
+**Given** a user has previously loaded today's todos while online,
+**When** they lose network connectivity,
+**Then** today's todos and goals remain fully visible and interactive using TanStack Query's `persistQueryClient` + AsyncStorage cache
+
+**Given** a user completes, adds, or edits a todo while offline,
+**When** the mutation is attempted,
+**Then** the change is applied optimistically to the local cache and queued in `offline-queue-store.ts` for later sync
+
+**Given** the device regains network connectivity,
+**When** the app detects the reconnect,
+**Then** all queued mutations are flushed to the API in order and the cache is invalidated to pull fresh server state
+
+**Given** an offline mutation conflicts with a server change (same todo edited on both platforms),
+**When** the sync resolves the conflict,
+**Then** last-write-wins is applied for todo status; capacity model data defers to server-authoritative values (NFR21)
+
+**Given** the app is offline,
+**When** the user views the today view,
+**Then** a small pulsing indicator in the top bar signals offline mode — no alarming banner, no blocking UI
+
+---
+
+### Story 8.4: Real-Time Cross-Platform Sync via SSE
+
+As a **user on multiple devices**,
+I want changes I make on one platform to appear on all my other connected devices within 5 seconds,
+So that my web and mobile apps always show the same state.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated user is connected on both web and mobile,
+**When** a todo is created, updated, or completed on one platform,
+**Then** the SSE stream (`GET /api/v1/stream`) pushes a `todo.updated` or `todo.created` event to all other connected clients for that user within 5 seconds (NFR4)
+
+**Given** an SSE event is received by a client,
+**When** the event is processed,
+**Then** TanStack Query invalidates `['todos', userId, date]` and refetches; the updated list appears without a full page reload
+
+**Given** the SSE connection drops,
+**When** the `EventSource` detects the disconnect,
+**Then** it attempts automatic reconnection; the user sees the small pulsing offline indicator but is not shown an error
+
+**Given** 3 or more consecutive SSE reconnection failures,
+**When** the client cannot re-establish the stream,
+**Then** the client falls back to polling on the next user action (no user-visible error)
+
+**Given** a capacity recalculation occurs on the server,
+**When** the `capacity.recalculated` SSE event is pushed,
+**Then** the CapacityBar updates on all connected clients without requiring a page refresh
+
+---
+
+### Story 8.5: EAS Build & App Store Submission
+
+As a **developer**,
+I want the Expo app built via EAS Build and submitted to the App Store and Google Play,
+So that users can download Tend from their platform's app store.
+
+**Acceptance Criteria:**
+
+**Given** the Expo app is configured with `app.json` (bundle ID, version, app name "Tend"),
+**When** `eas build --platform all` is run,
+**Then** EAS produces an `.ipa` (iOS) and `.aab` (Android) build without errors
+
+**Given** the iOS build,
+**When** submitted to App Store Connect,
+**Then** it passes Apple's automated pre-review checks (icon, splash screen, required permissions declared)
+
+**Given** the Android build,
+**When** submitted to Google Play Console,
+**Then** it passes Google's automated review requirements (target SDK, permissions, signing)
+
+**Given** the app store listings,
+**When** published,
+**Then** the app name is "Tend", the description communicates the core value proposition, and screenshots represent the actual app UI
