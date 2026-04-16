@@ -1,0 +1,106 @@
+HALT — Phase 1 Complete, Phase 2 Needs You                                                                                    
+                                                                                                                                   
+  Story 1.2 status: in-progress (not yet review). Awaiting your manual dashboard setup.                                            
+                                                                                                                                   
+  What I shipped (Phase 1 — code)                                                                                                  
+                                                                                                                                   
+  ┌───────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────┐  
+  │                 File                  │                                       Purpose                                       │
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤
+  │ apps/api/Dockerfile                   │ Multi-stage distroless build, 24.4 MB image (target ≤25), CGO-disabled static       │
+  │                                       │ binary                                                                              │
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ apps/api/.dockerignore                │ Keeps build context lean; excludes .env*, tests, .git, node_modules, *.md           │  
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ apps/api/cmd/server/main.go           │ Refactored: newRouter(DBPinger) accepts injectable DB; new /health/db endpoint with │  
+  │                                       │  2s timeout, structured 200/503 responses; pool sized 5/2 connections               │
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ apps/api/cmd/server/health_db_test.go │ 3 new tests (TDD): not-configured → 503, reachable → 200, unreachable → 503 with    │  
+  │                                       │ error                                                                               │
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ apps/api/go.mod / go.sum              │ Added github.com/lib/pq (stdlib database/sql driver — no GORM yet)                  │
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ apps/web/vercel.json                  │ SPA history-mode rewrites so React Router (Story 1.3+) doesn't 404 on deep links    │
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ apps/web/src/lib/env.ts               │ Typed env getter with prod-only required-var enforcement (no zod yet — deferred per │
+  │                                       │  story)                                                                             │  
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤
+  │ apps/web/.env.example                 │ Now has VITE_API_BASE_URL=http://localhost:8080 (uncommented for default)           │  
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ apps/api/.env.example                 │ Adds DATABASE_URL placeholder + GIN_MODE=release note                               │
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ apps/mobile/.env.example              │ Now has EXPO_PUBLIC_API_BASE_URL=http://localhost:8080 (uncommented)                │
+  ├───────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────┤  
+  │ README.md                             │ New "Deployments" + "Production release" + "Secrets" sections; local Postgres setup │
+  │                                       │  steps                                                                              │  
+  └───────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────┘
+                                                                                                                                   
+  Verified locally end-to-end                               
+
+  - ✅ docker build apps/api → 24.4 MB image                                                                                       
+  - ✅ Container w/o DB: /health → 200; /health/db → 503 with db:"not_configured"
+  - ✅ Container w/ Dockerized Postgres: /health/db → 200 with db:"reachable"                                                      
+  - ✅ GIN_MODE=release honored in container                                                                                       
+  - ✅ All 4 Go tests pass; typecheck 4/4; lint 4/4; OpenAPI sync clean                                                            
+  - ✅ /health/db appears in regenerated swagger.json + api.ts                                                                     
+                                                                                                                                   
+  What you need to do (Phase 2 — dashboard)                                                                                        
+                                                                                                                                   
+  I'll give you a step-by-step. Total time: ~15-20 min.                                                                            
+   
+  A. Railway (~10 min)                                                                                                             
+                                                            
+  1. Sign in to railway.app → New Project → Deploy from GitHub repo → select this repo.                                            
+  2. Once detected, Railway will probably try to deploy from root. Edit the service:
+    - Settings → Root Directory: apps/api                                                                                          
+    - Settings → Build: Dockerfile (Railway should auto-detect apps/api/Dockerfile)
+    - Settings → Watch Paths: apps/api/** (so changes to web/mobile don't trigger API redeploys)                                   
+  3. Create the staging environment: in the project, you'll see a default environment named production — rename to staging if      
+  Railway lets you, or create a new one named staging. (We'll add production next.)                                                
+  4. Add Postgres: in staging env → + New → Database → PostgreSQL.                                                                 
+  5. Add env vars to staging: API service → Variables tab:                                                                         
+    - DATABASE_URL = ${{Postgres.DATABASE_URL}} (variable reference — Railway autocompletes)                                       
+    - GIN_MODE = release                                                                                                           
+    - (Don't set PORT — Railway sets it automatically.)                                                                            
+  6. Wait for deploy → check the API service URL → curl https://<your-railway-url>/health should return {"status":"ok"}.           
+  7. Repeat for production env: Settings → Environments → New Environment → name production. Add Postgres add-on to it. Set the    
+  same vars (DATABASE_URL + GIN_MODE=release). For now, the production env can deploy from main too — you'll switch to manual      
+  promotion later.                                                                                                                 
+                                                                                                                                   
+  B. Vercel (~5 min)                                                                                                               
+   
+  1. Sign in to vercel.com → Add New → Project → import the GitHub repo.                                                           
+  2. Configure:                                             
+    - Root Directory: apps/web                                                                                                     
+    - Framework Preset: Vite (auto-detected)                
+    - Include source files outside of the Root Directory: YES (toggle on — this is the monorepo install fix from Q5)               
+    - Install Command: pnpm install --frozen-lockfile (override default if needed)                                                 
+    - Build Command: leave default (pnpm build from apps/web)                                                                      
+    - Output Directory: dist (Vite default)                                                                                        
+  3. Add env var: Settings → Environment Variables → VITE_API_BASE_URL = your Railway staging URL (e.g.                            
+  https://tend-api-staging-xxxx.up.railway.app). Apply to all three Vercel envs (Production / Preview / Development).              
+  4. Deploy. Once green, hit the production URL; the SPA should load.                                                              
+  5. Open a draft PR with any trivial change to apps/web/ — Vercel should comment a preview URL within ~2 min.                     
+                                                                                                                                   
+  C. Paste the URLs back                                                                                                           
+                                                                                                                                   
+  Reply with:                                                                                                                      
+  - Railway staging API URL: https://...                    
+  - Railway production API URL: https://... (will be different if you spun up a separate prod env)                                 
+  - Vercel production web URL: https://...                                                        
+                                                                                                                                   
+  I'll then:                                                
+  1. Update README.md's "Deployments" table with the real URLs                                                                     
+  2. Run AC verification (curl /health + /health/db against both staging and production)                                           
+  3. Update story → review                                                                                                         
+  4. You'll then run /bmad-code-review on Story 1.2                                                                                
+                                                            
+  What's deferred (added to deferred-work.md after this lands)                                                                     
+                                                                                                                                   
+  - Custom domains (e.g., api.tend.app) — wait until launch                                                                        
+  - Vercel preview-URL bot override — Vercel's default bot is fine                                                                 
+  - packages/config with zod env schemas — premature for 1 env var                                                                 
+  - Automatic production-deploy via tag/workflow_dispatch — premature for solo dev                                                 
+                                                                                                                                   
+  Ready when you are. Take your time with the dashboards — they're easy to misconfigure on the first pass and worth getting right. 
+                                    

@@ -1,7 +1,7 @@
 {
     "components": {},
     "info": {
-        "description": "Returns 200 OK when the API process is running.",
+        "description": "Returns 200 if the API can reach Postgres, 503 otherwise.",
         "title": "Tend API",
         "version": "0.1.0"
     },
@@ -29,6 +29,43 @@
                     }
                 },
                 "summary": "Liveness check",
+                "tags": [
+                    "health"
+                ]
+            }
+        },
+        "/health/db": {
+            "get": {
+                "description": "Returns 200 if the API can reach Postgres, 503 otherwise.",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Service Unavailable"
+                    }
+                },
+                "summary": "DB connectivity check",
                 "tags": [
                     "health"
                 ]

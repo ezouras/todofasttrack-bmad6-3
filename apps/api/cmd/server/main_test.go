@@ -10,8 +10,11 @@ import (
 )
 
 func TestHealthEndpoint(t *testing.T) {
+	prevMode := gin.Mode()
 	gin.SetMode(gin.TestMode)
-	router := newRouter()
+	t.Cleanup(func() { gin.SetMode(prevMode) })
+
+	router := newRouter(nil)
 
 	req := httptest.NewRequest(http.MethodGet, "/health", nil)
 	rec := httptest.NewRecorder()

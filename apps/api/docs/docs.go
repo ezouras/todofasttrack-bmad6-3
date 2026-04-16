@@ -40,6 +40,43 @@ const docTemplate = `{
                     "health"
                 ]
             }
+        },
+        "/health/db": {
+            "get": {
+                "description": "Returns 200 if the API can reach Postgres, 503 otherwise.",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Service Unavailable"
+                    }
+                },
+                "summary": "DB connectivity check",
+                "tags": [
+                    "health"
+                ]
+            }
         }
     },
     "openapi": "3.1.0",
@@ -54,7 +91,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.1.0",
 	Title:            "Tend API",
-	Description:      "Returns 200 OK when the API process is running.",
+	Description:      "Returns 200 if the API can reach Postgres, 503 otherwise.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

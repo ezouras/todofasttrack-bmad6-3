@@ -5,6 +5,13 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   go-checks:
     name: Go vet + test
@@ -13,14 +20,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: "stable"
+          go-version-file: apps/api/go.mod
           cache-dependency-path: apps/api/go.sum
       - name: go vet
         working-directory: apps/api
         run: go vet ./...
       - name: go test
         working-directory: apps/api
-        run: go test ./...
+        run: go test -timeout 5m ./...
 
   ts-checks:
     name: TypeScript typecheck + lint
@@ -28,6 +35,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -46,24 +55,35 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: "stable"
+          go-version-file: apps/api/go.mod
           cache-dependency-path: apps/api/go.sum
       - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: pnpm
-      - name: Install swag CLI (v2)
-        run: go install github.com/swaggo/swag/v2/cmd/swag@latest
+      - name: Install swag CLI (v2 — pinned to match go.mod)
+        run: go install github.com/swaggo/swag/v2/cmd/swag@v2.0.0-rc5
       - name: Install JS dependencies
         run: pnpm install --frozen-lockfile
       - name: Regenerate types
         run: pnpm run generate:types
       - name: Verify no drift
         run: |
+          # Fail if any tracked generated file differs:
           if ! git diff --exit-code -- packages/types/generated/api.ts apps/api/docs/swagger.json apps/api/docs/swagger.yaml apps/api/docs/docs.go; then
             echo ""
             echo "::error::packages/types is out of sync with the Go OpenAPI spec."
             echo "::error::Run 'pnpm run generate:types' locally and commit the changes."
+            exit 1
+          fi
+          # Also fail if regen produced any new untracked generated file:
+          UNTRACKED=$(git status --porcelain -- packages/types/generated apps/api/docs | grep '^??' || true)
+          if [ -n "$UNTRACKED" ]; then
+            echo ""
+            echo "::error::generate:types produced new untracked files. Commit them:"
+            echo "$UNTRACKED"
             exit 1
           fi

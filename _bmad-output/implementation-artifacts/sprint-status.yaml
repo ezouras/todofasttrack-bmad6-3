@@ -43,8 +43,8 @@ story_location: _bmad-output/implementation-artifacts
 
 development_status:
   epic-1: in-progress
-  1-1-monorepo-scaffold-ci-pipeline: review
-  1-2-deployment-infrastructure: backlog
+  1-1-monorepo-scaffold-ci-pipeline: done
+  1-2-deployment-infrastructure: in-progress
   1-3-design-system-foundation: backlog
   1-4-email-password-sign-up-login: backlog
   1-5-social-authentication-google-apple-sign-in: backlog
