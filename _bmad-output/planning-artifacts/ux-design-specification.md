@@ -8,6 +8,8 @@ stepsCompleted:
   - step-06-design-system
   - step-07-defining-experience
   - step-08-visual-foundation
+  - step-09-design-directions
+  - step-10-user-journeys
 inputDocuments:
   - _bmad-output/planning-artifacts/prd.md
   - _bmad-output/planning-artifacts/architecture.md
@@ -396,3 +398,38 @@ Teaching moment: the first time a user adds a todo and sees the capacity bar res
 - Goal colors supplemented by goal name text on all tagged todos — color-blind users can still identify goals
 - Capacity warning uses both color (amber) and icon + text — never color alone
 - Plus Jakarta Sans has good legibility at small sizes; minimum rendered size 12px
+
+## Design Direction Decision
+
+### Design Directions Explored
+
+Four layout approaches were explored for Tend's daily planning view, all using the established visual foundation (warm blush palette, Plus Jakarta Sans, warm cream background):
+
+- **A — Airy Column:** Centered narrow column, soft todo cards, capacity bar + goals above the list
+- **B — Sidebar + List:** Persistent left sidebar for goals/capacity/navigation, list in main area
+- **C — Card Stack:** Blush pink header with capacity, goals strip, each todo as an elevated card
+- **D — Ultra Minimal:** Near-invisible chrome, capacity as dots, goal identity via color dot per row
+
+### Chosen Direction
+
+**Direction A — Airy Column**
+
+Centered single-column layout (max ~600px content width), generous whitespace, todos as soft surface cards on cream background. Capacity bar and goal pills sit above the list as quiet context — always visible, never dominant.
+
+### Design Rationale
+
+Direction A best embodies Tend's emotional brief:
+- The centered narrow column mirrors the focused, intentional feeling of a personal journal — you're planning your day, not managing a system
+- Generous whitespace signals calm before the user reads a single word — consistent with Calm's visual rhythm
+- Goals as small colored pills above the list keep long-term context visible without competing with today's todos
+- The dashed "Add a todo…" row keeps creation accessible and low-pressure — not a prominent button demanding action
+- Scales gracefully to mobile by simply removing the horizontal padding constraint
+
+### Implementation Approach
+
+- Max content width: 600px, centered within the viewport
+- Todo rows: soft `color-surface` (`#FFF8F5`) cards with `rounded-2xl` corners, 14px padding, 8px gap between items
+- No sidebar at MVP — navigation via top bar on desktop; tab bar on mobile
+- Capacity bar: thin (6px), blush gradient, sits beneath the date heading
+- Goal pills: small `rounded-full` chips with dot + name, horizontally scrollable if needed
+- "Add todo" as a dashed inline row at bottom of list — no floating action button on web
