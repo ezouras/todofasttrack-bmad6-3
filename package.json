@@ -1,0 +1,21 @@
+{
+  "name": "tend",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "generate:types": "cd apps/api && swag init -g cmd/server/main.go -o ./docs && cd ../.. && openapi-typescript apps/api/docs/swagger.json -o packages/types/generated/api.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.4.4",
+    "turbo": "^2.9.6",
+    "typescript": "5.9.2"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.11.0"
+  }
+}
